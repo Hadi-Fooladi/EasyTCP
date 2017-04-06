@@ -1,0 +1,12 @@
+﻿<EasyTCP Version="1.0" ClassName="SampleStream">
+	<Packet Code="0" Name="Grades" Desc="Sending Grades">
+		<Data Name="Name" Type="string" />
+		<Data Name="Grade" Type="int" isList="Yes" />
+	</Packet>
+
+	<Packet Code="1" Name="Status" Desc="Sending Status">
+		<Data Name="Code" Type="string" Desc="SSN" />
+		<Data Name="Married" Type="bool" />
+		<Data Name="Age" Type="int" />
+	</Packet>
+</EasyTCP>

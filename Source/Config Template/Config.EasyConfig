@@ -1,0 +1,16 @@
+<Root Name="EasyTCP" Version="1.0">
+	<Attribute Name="ClassName" Type="string" />
+
+	<Node Name="Packet" Multiple="Yes">
+		<Attribute Name="Code" Type="int" />
+		<Attribute Name="Name" Type="string" Desc="Used for method, event and delegate names (Must be unique)" />
+		<Attribute Name="Desc" Type="string" Default="" />
+
+		<Node Name="Data" Type="struct" Multiple="Yes">
+			<Attribute Name="Name" Type="string" />
+			<Attribute Name="Type" Type="string" />
+			<Attribute Name="Desc" Type="string" Default="" />
+			<Attribute Name="isList" Type="yn" Default="false" />
+		</Node>
+	</Node>
+</Root>
