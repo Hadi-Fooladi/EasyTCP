@@ -1,0 +1,23 @@
+﻿<Window
+	x:ClassModifier="internal"
+	x:Class="SimpleMessenger.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:SimpleMessenger"
+	mc:Ignorable="d"
+	Title="Simple Messenger"
+	FontSize="20"
+	WindowStartupLocation="CenterScreen"
+	Width="640" Height="480">
+	<DockPanel>
+		<DockPanel DockPanel.Dock="Bottom" Height="50">
+			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bSend_OnClick">Send</Button>
+			<TextBox Name="tbMsg"  VerticalAlignment="Center" Margin="5,0" />
+		</DockPanel>
+		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+			<TextBlock Name="TB" Padding="5" />
+		</ScrollViewer>
+	</DockPanel>
+</Window>

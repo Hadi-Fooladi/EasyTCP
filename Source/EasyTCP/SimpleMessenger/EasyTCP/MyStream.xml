@@ -1,0 +1,9 @@
+﻿<EasyTCP Version="1.0" ClassName="MyStream">
+	<Packet Code="0" Name="Info">
+		<Data Name="Name" Type="string" />
+	</Packet>
+
+	<Packet Code="1" Name="Message">
+		<Data Name="Message" Type="string" />
+	</Packet>
+</EasyTCP>
