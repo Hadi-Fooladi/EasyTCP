@@ -23,4 +23,5 @@
 		<Data Name="Positions" Type="Vector" isList="Yes" />
 	</Packet>
 
+	<Packet Code="4" Name="Signal" Desc="No Data" />
 </EasyTCP>

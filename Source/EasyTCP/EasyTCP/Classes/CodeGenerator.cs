@@ -8,7 +8,7 @@ namespace EasyTCP
 	{
 		public CodeGenerator(string Filename) : base(Filename) { }
 
-		private readonly Dictionary<string, string> dicRead = new Dictionary<string, string>
+		private static readonly Dictionary<string, string> dicRead = new Dictionary<string, string>
 		{
 			["bool"] = "ReadBoolean",
 			["char"] = "ReadChar",
@@ -97,16 +97,32 @@ namespace EasyTCP
 				SW.WriteLine("#region Delegates");
 				SW.WriteLine("public delegate void dlg({0} Sender);", ClassName);
 				foreach (var P in Packet)
-					SW.WriteLine("public delegate void dlg{0}({1} Sender, {2});", P.Name, ClassName, P.Signature());
+				{
+					string S = P.Signature();
+					if (S != "") S = ", " + S;
+
+					SW.WriteLine("public delegate void dlg{0}({1} Sender{2});", P.Name, ClassName, S);
+				}
+
 				SW.WriteLine("#endregion");
 				SW.WriteLine();
 				#endregion
 
 				#region Events
 				SW.WriteLine("#region Events");
+
+				// Events
 				SW.WriteLine("public event dlg OnClosed;");
 				foreach (var P in Packet)
 					SW.WriteLine("public event dlg{0} On{0};", P.Name);
+
+				SW.WriteLine();
+
+				// Firing Methods
+				AddFireMethod(SW, "Closed", "", "");
+				foreach (var P in Packet)
+					AddFireMethod(SW, P);
+
 				SW.WriteLine("#endregion");
 				SW.WriteLine();
 				#endregion
@@ -185,7 +201,7 @@ namespace EasyTCP
 							SW.WriteLine();
 
 							SW.WriteLine("Client.Close();");
-							SW.WriteLine("OnClosed?.Invoke(this);");
+							SW.WriteLine("fireClosed();");
 							SW.WriteLine("return; // Exit the thread");
 						});
 
@@ -206,7 +222,10 @@ namespace EasyTCP
 												string.Format("BR.{0}();", dicRead[D.Type]) :
 												string.Format("new {0}(BR);", D.Type);
 
-									Args += ", " + VarName;
+									if (Args != "")
+										Args += ", ";
+
+									Args += VarName;
 
 									if (D.isList)
 									{
@@ -229,7 +248,7 @@ namespace EasyTCP
 								}
 
 								if (!BlankLine) SW.WriteLine();
-								SW.WriteLine("On{0}?.Invoke(this{1});", P.Name, Args);
+								SW.WriteLine("fire{0}({1});", P.Name, Args);
 								SW.WriteLine("break;");
 							});
 						}
@@ -248,5 +267,14 @@ namespace EasyTCP
 				#endregion
 			});
 		}
+
+		private static void AddFireMethod(IndentedStreamWriter SW, string Name, string Signature, string Arguments)
+			=> SW.WriteLine(
+				"protected void fire{0}({1}) {{ if (On{0} != null) On{0}(this{3}{2}); }}",
+				Name, Signature, Arguments, string.IsNullOrEmpty(Arguments) ? "" : ", ");
+
+		private static void AddFireMethod(IndentedStreamWriter SW, PacketData P)
+			=> AddFireMethod(SW, P.Name, P.Signature(), P.Signature(true));
+
 	}
 }
