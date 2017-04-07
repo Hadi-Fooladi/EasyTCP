@@ -45,6 +45,12 @@ namespace EasyTCP
 			WriteLine("/// </summary>");
 		}
 
+		public void WriteParameterDesc(string Name, string Desc)
+		{
+			if (!string.IsNullOrEmpty(Desc))
+				WriteLine("/// <param name=\"{0}\">{1}</param>", Name, Desc);
+		}
+
 		public void Inside(Action A)
 		{
 			IndentationCount++;

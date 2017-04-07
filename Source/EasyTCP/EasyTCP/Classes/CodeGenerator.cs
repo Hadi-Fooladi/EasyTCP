@@ -118,6 +118,11 @@ namespace EasyTCP
 				#region Send Methods
 				foreach (var P in Packet)
 				{
+					// Desc
+					SW.WriteDesc(P.Desc);
+					foreach (var D in P.Data)
+						SW.WriteParameterDesc(D.Name, D.Desc);
+
 					SW.WriteLine("public void Send{0}({1})", P.Name, P.Signature());
 					SW.Block(() =>
 					{
@@ -187,7 +192,7 @@ namespace EasyTCP
 						foreach (var P in Packet)
 						{
 							SW.WriteLine();
-							SW.WriteLine("case {0}:", P.Code);
+							SW.WriteLine("case {0}: // {1}", P.Code, P.Name);
 							SW.Block(() =>
 							{
 								var Args = "";
@@ -196,7 +201,10 @@ namespace EasyTCP
 								{
 									string
 										VarName = "o" + D.Name,
-										ReadMethod = dicRead[D.Type];
+										Deserializer =
+											dicRead.ContainsKey(D.Type) ?
+												string.Format("BR.{0}();", dicRead[D.Type]) :
+												string.Format("new {0}(BR);", D.Type);
 
 									Args += ", " + VarName;
 
@@ -208,7 +216,7 @@ namespace EasyTCP
 										SW.WriteLine("var {0} = BR.ReadUInt16();", CountVar);
 										SW.WriteLine("var {0} = new {1}[{2}];", VarName, D.Type, CountVar);
 										SW.WriteLine("for (ushort i = 0; i < {0}; i++)", CountVar);
-										SW.Inside(() => SW.WriteLine("{0}[i] = BR.{1}();", VarName, ReadMethod));
+										SW.Inside(() => SW.WriteLine("{0}[i] = {1}", VarName, Deserializer));
 
 										SW.WriteLine();
 										BlankLine = true;
@@ -216,7 +224,7 @@ namespace EasyTCP
 									else
 									{
 										BlankLine = false;
-										SW.WriteLine("var {0} = BR.{1}();", VarName, ReadMethod);
+										SW.WriteLine("var {0} = {1}", VarName, Deserializer);
 									}
 								}
 

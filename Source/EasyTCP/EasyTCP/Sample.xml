@@ -8,5 +8,19 @@
 		<Data Name="Code" Type="string" Desc="SSN" />
 		<Data Name="Married" Type="bool" />
 		<Data Name="Age" Type="int" />
+		<Data Name="Car" Type="Car" />
 	</Packet>
+
+	<Packet Code="2" Name="Status2">
+		<Data Name="Code" Type="string" Desc="SSN" />
+		<Data Name="Married" Type="bool" />
+		<Data Name="Age" Type="int" />
+	</Packet>
+
+	<Packet Code="3" Name="Lists">
+		<Data Name="Animals" Type="string" isList="Yes" />
+		<Data Name="Numbers" Type="float" isList="Yes" />
+		<Data Name="Positions" Type="Vector" isList="Yes" />
+	</Packet>
+
 </EasyTCP>

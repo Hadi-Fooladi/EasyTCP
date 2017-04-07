@@ -70,7 +70,7 @@ namespace EasyTCP.Properties {
         ///	Flush();
         ///}
         ///
-        ///public void Wait4Close(int MilliSeconds = 3000) =&gt; T.Join(MilliSeconds);
+        ///public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
         ///
         ///private void WriteCode(ushort Code)
         ///{
