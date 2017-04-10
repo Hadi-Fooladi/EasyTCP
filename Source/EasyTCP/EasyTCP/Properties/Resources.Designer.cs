@@ -61,7 +61,28 @@ namespace EasyTCP.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to public void SendCloseRequest()
+        ///   Looks up a localized string similar to public void Connect(TcpClient Client)
+        ///{
+        ///	this.Client = Client;
+        ///	Client.NoDelay = true;
+        ///
+        ///	NS = Client.GetStream();
+        ///	BR = new BinaryReader(NS);
+        ///	var BW = new BinaryWriter(NS);
+        ///
+        ///	BW.Write(Version.Major);
+        ///	BW.Write(Version.Minor);
+        ///
+        ///	var Major = BR.ReadInt32();
+        ///	BR.ReadInt32(); // Skip Minor
+        ///
+        ///	if (Major != Version.Major)
+        ///		throw new Exception(&quot;Version Mismatch&quot;);
+        ///
+        ///	T.Start();
+        ///}
+        ///
+        ///public void SendCloseRequest()
         ///{
         ///	if (Closing) return;
         ///
@@ -69,23 +90,7 @@ namespace EasyTCP.Properties {
         ///	WriteCode(0xFFFF);
         ///	Flush();
         ///}
-        ///
-        ///public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
-        ///
-        ///private void WriteCode(ushort Code)
-        ///{
-        ///	BW.Write(Code);
-        ///	MS.Position += 2;
-        ///}
-        ///
-        ///private void Flush()
-        ///{
-        ///	var Len = (ushort)(MS.Position - 4);
-        ///	MS.Position = 2;
-        ///	BW.Write(Len);
-        ///	NS.Write(B, 0, Len + 4);
-        ///	MS.Position = 0;
-        ///}.
+        ///        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Methods {
             get {

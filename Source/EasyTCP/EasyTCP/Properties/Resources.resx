@@ -118,7 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Methods" xml:space="preserve">
-    <value>public void SendCloseRequest()
+    <value>public void Connect(TcpClient Client)
+{
+	this.Client = Client;
+	Client.NoDelay = true;
+
+	NS = Client.GetStream();
+	BR = new BinaryReader(NS);
+	var BW = new BinaryWriter(NS);
+
+	BW.Write(Version.Major);
+	BW.Write(Version.Minor);
+
+	var Major = BR.ReadInt32();
+	BR.ReadInt32(); // Skip Minor
+
+	if (Major != Version.Major)
+		throw new Exception("Version Mismatch");
+
+	T.Start();
+}
+
+public void SendCloseRequest()
 {
 	if (Closing) return;
 
@@ -128,6 +149,8 @@
 }
 
 public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
+
+public void ForceClose() { Running = false; T.Join(); }
 
 private void WriteCode(ushort Code)
 {

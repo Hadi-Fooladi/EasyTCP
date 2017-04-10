@@ -22,7 +22,7 @@ namespace SimpleMessenger
 			var ListenerTimer = new DispatcherTimer
 			{
 				IsEnabled = true,
-				Interval = TimeSpan.FromSeconds(.5)
+				Interval = TimeSpan.FromSeconds(.05)
 			};
 			ListenerTimer.Tick += ListenerTimer_Tick;
 
@@ -32,10 +32,16 @@ namespace SimpleMessenger
 		private void ServerWindow_Closed(object sender, EventArgs e)
 		{
 			foreach (var MS in Dic.Keys)
+			{
+				MS.OnClosed -= MyStream_OnClosed;
 				MS.SendCloseRequest();
+			}
 
 			foreach (var MS in Dic.Keys)
+			{
 				MS.Wait4Close();
+				MS.ForceClose();
+			}
 		}
 
 		private const int PORT = 4987;
@@ -57,11 +63,11 @@ namespace SimpleMessenger
 			if (Listener.Pending())
 				try
 				{
-					TcpClient C = Listener.AcceptTcpClient();
-					var MyStream = new MyStream(C);
+					var MyStream = new MyStream();
 					MyStream.OnInfo += MyStream_OnInfo;
 					MyStream.OnClosed += MyStream_OnClosed;
 					MyStream.OnMessage += MyStream_OnMessage;
+					MyStream.Connect(Listener.AcceptTcpClient());
 				}
 				catch (Exception E)
 				{

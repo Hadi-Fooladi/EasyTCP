@@ -40,7 +40,7 @@
 				<TextBox Grid.Row="0" Grid.Column="1" Name="tbName" />
 				
 				<Label Grid.Row="1" Grid.Column="0">Host:</Label>
-				<TextBox Grid.Row="1" Grid.Column="1" Name="tbHost" Text="localhost" />
+				<TextBox Grid.Row="1" Grid.Column="1" Name="tbHost" Text="127.0.0.1" />
 			</Grid>
 		</DockPanel>
 	</DockPanel>

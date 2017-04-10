@@ -13,12 +13,12 @@ namespace SimpleMessenger
 		{
 			InitializeComponent();
 
-			var C = new TcpClient(Host, PORT);
-			MS = new MyStream(C);
+			MS = new MyStream();
 			MS.OnClosed += MyStream_OnClosed;
 			MS.OnMessage += MyStream_OnMessage;
 
-			Thread.Sleep(100);
+			MS.Connect(new TcpClient(Host, PORT));
+
 			MS.SendInfo(Name);
 
 			Title = Name;

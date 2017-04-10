@@ -36,49 +36,26 @@ namespace EasyTCP
 				SW.WriteLine();
 
 				#region Constructor
-				SW.WriteLine("public {0}(TcpClient Client)", ClassName);
+				SW.WriteLine("public {0}()", ClassName);
 				SW.Block(() =>
 				{
-					SW.WriteLine("this.Client = Client;");
-					SW.WriteLine("Client.NoDelay = true;");
-					SW.WriteLine();
-
 					SW.WriteLine("MS = new MemoryStream(B);");
-					SW.WriteLine("this.BW = new BinaryWriter(MS);");
+					SW.WriteLine("BW = new BinaryWriter(MS);");
 					SW.WriteLine();
-
-					SW.WriteLine("NS = Client.GetStream();");
-					SW.WriteLine("BR = new BinaryReader(NS);");
-					SW.WriteLine("var BW = new BinaryWriter(NS);");
-					SW.WriteLine();
-
-					// Sending Version
-					SW.WriteLine("BW.Write(Version.Major);");
-					SW.WriteLine("BW.Write(Version.Minor);");
-					SW.WriteLine();
-
-					// Reading Version
-					SW.WriteLine("var Major = BR.ReadInt32();");
-					SW.WriteLine("BR.ReadInt32(); // Skip Minor");
-					SW.WriteLine();
-
-					// Checking Version
-					SW.WriteLine("if (Major != Version.Major)");
-					SW.Inside(() => SW.WriteLine("throw new Exception(\"Version Mismatch\");"));
-					SW.WriteLine();
-
-					// Starting the thread
 					SW.WriteLine("T = new Thread(ReceiveData);");
-					SW.WriteLine("T.Start();");
 				});
 				SW.WriteLine();
 				#endregion
 
 				#region Fields Declaration
 				SW.WriteLine("#region Fields");
-				SW.WriteLine("private readonly BinaryReader BR;");
-				SW.WriteLine("private readonly TcpClient Client;");
-				SW.WriteLine("private readonly NetworkStream NS;");
+				SW.WriteDesc("Amount of sleep time if no data exist (in millisecond)");
+				SW.WriteLine("public int Sleep4Data = 100;");
+				SW.WriteLine();
+
+				SW.WriteLine("private BinaryReader BR;");
+				SW.WriteLine("private TcpClient Client;");
+				SW.WriteLine("private NetworkStream NS;");
 				SW.WriteLine();
 
 				SW.WriteLine("private readonly MemoryStream MS;");
@@ -86,9 +63,8 @@ namespace EasyTCP
 				SW.WriteLine("private readonly byte[] B = new byte[ushort.MaxValue];");
 				SW.WriteLine();
 
-
-				SW.WriteLine("private bool Closing;");
 				SW.WriteLine("private readonly Thread T;");
+				SW.WriteLine("private bool Closing, Running = true;");
 				SW.WriteLine("#endregion");
 				SW.WriteLine();
 				#endregion
@@ -173,13 +149,13 @@ namespace EasyTCP
 				SW.WriteLine("private void ReceiveData()");
 				SW.Block(() =>
 				{
-					SW.WriteLine("for (;;)");
+					SW.WriteLine("while (Running)");
 					SW.Block(() =>
 					{
 						SW.WriteLine("if (Client.Available <= 0)");
 						SW.Block(() =>
 						{
-							SW.WriteLine("Thread.Sleep(100);");
+							SW.WriteLine("Thread.Sleep(Sleep4Data);");
 							SW.WriteLine("continue;");
 						});
 						SW.WriteLine();
