@@ -6,4 +6,15 @@
 	<Packet Code="1" Name="Message">
 		<Data Name="Message" Type="string" />
 	</Packet>
+
+	<Packet Code="2" Name="PicHeader">
+		<Data Name="id" Type="long" />
+		<Data Name="SegmentCount" Type="int" />
+	</Packet>
+
+	<Packet Code="3" Name="PicSegment">
+		<Data Name="id" Type="long" />
+		<Data Name="Num" Type="int" />
+		<Data Name="Data" Type="ByteArray" />
+	</Packet>
 </EasyTCP>

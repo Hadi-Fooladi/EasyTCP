@@ -13,7 +13,8 @@
 	Width="640" Height="480">
 	<DockPanel>
 		<DockPanel DockPanel.Dock="Bottom" Height="50">
-			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bSend_OnClick">Send</Button>
+			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bPic_OnClick" Margin="0,0,5,0">Pic</Button>
+			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bSend_OnClick" Margin="0,0,5,0">Send</Button>
 			<TextBox Name="tbMsg"  VerticalAlignment="Center" Margin="5,0" />
 		</DockPanel>
 		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
