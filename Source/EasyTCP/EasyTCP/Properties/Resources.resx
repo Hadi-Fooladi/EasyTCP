@@ -124,7 +124,7 @@
 	Client.NoDelay = true;
 
 	NS = Client.GetStream();
-	BR = new BinaryReader(NS);
+	BR = new BinaryReader(NS, Encoding.Unicode);
 	var BW = new BinaryWriter(NS);
 
 	BW.Write(Version.Major);

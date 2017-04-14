@@ -40,7 +40,7 @@ namespace EasyTCP
 				SW.Block(() =>
 				{
 					SW.WriteLine("MS = new MemoryStream(B);");
-					SW.WriteLine("BW = new BinaryWriter(MS);");
+					SW.WriteLine("BW = new BinaryWriter(MS, Encoding.Unicode);");
 					SW.WriteLine();
 					SW.WriteLine("T = new Thread(ReceiveData);");
 				});
@@ -60,7 +60,7 @@ namespace EasyTCP
 
 				SW.WriteLine("private readonly MemoryStream MS;");
 				SW.WriteLine("private readonly BinaryWriter BW;");
-				SW.WriteLine("private readonly byte[] B = new byte[ushort.MaxValue];");
+				SW.WriteLine("private readonly byte[] B = new byte[65536];");
 				SW.WriteLine();
 
 				SW.WriteLine("private readonly Thread T;");

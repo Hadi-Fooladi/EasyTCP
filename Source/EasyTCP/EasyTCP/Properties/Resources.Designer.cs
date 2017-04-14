@@ -67,7 +67,7 @@ namespace EasyTCP.Properties {
         ///	Client.NoDelay = true;
         ///
         ///	NS = Client.GetStream();
-        ///	BR = new BinaryReader(NS);
+        ///	BR = new BinaryReader(NS, Encoding.Unicode);
         ///	var BW = new BinaryWriter(NS);
         ///
         ///	BW.Write(Version.Major);
@@ -87,10 +87,7 @@ namespace EasyTCP.Properties {
         ///	if (Closing) return;
         ///
         ///	Closing = true;
-        ///	WriteCode(0xFFFF);
-        ///	Flush();
-        ///}
-        ///        /// [rest of string was truncated]&quot;;.
+        ///	WriteCode(0xFFFF) [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Methods {
             get {

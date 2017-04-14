@@ -68,6 +68,7 @@ namespace EasyTCP
 
 					SW.WriteLine("using System;");
 					SW.WriteLine("using System.IO;");
+					SW.WriteLine("using System.Text;");
 					SW.WriteLine("using System.Threading;");
 					SW.WriteLine("using System.Net.Sockets;");
 					SW.WriteLine("using System.Collections.Generic;");
