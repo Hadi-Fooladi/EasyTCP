@@ -120,24 +120,17 @@ namespace EasyTCP
 					{
 						SW.WriteLine("WriteCode({0});", P.Code);
 
-						var BlankLine = true;
 						foreach (var D in P.Data)
 							if (D.isList)
 							{
-								if (!BlankLine) SW.WriteLine();
-
+								SW.WriteLine();
 								SW.WriteLine("BW.Write((ushort){0}.Count);", D.Name);
 								SW.WriteLine("foreach (var X in {0})", D.Name);
 								SW.Inside(() => SW.WriteLine("BW.Write(X);"));
-
 								SW.WriteLine();
-								BlankLine = true;
 							}
 							else
-							{
-								BlankLine = false;
 								SW.WriteLine("BW.Write({0});", D.Name);
-							}
 
 						SW.WriteLine("Flush();");
 					});
@@ -188,7 +181,6 @@ namespace EasyTCP
 							SW.Block(() =>
 							{
 								var Args = "";
-								var BlankLine = true;
 								foreach (var D in P.Data)
 								{
 									string
@@ -205,25 +197,19 @@ namespace EasyTCP
 
 									if (D.isList)
 									{
-										if (!BlankLine) SW.WriteLine();
-
+										SW.WriteLine();
 										var CountVar = D.Name + "Count";
 										SW.WriteLine("var {0} = BR.ReadUInt16();", CountVar);
 										SW.WriteLine("var {0} = new {1}[{2}];", VarName, D.Type, CountVar);
 										SW.WriteLine("for (ushort i = 0; i < {0}; i++)", CountVar);
 										SW.Inside(() => SW.WriteLine("{0}[i] = {1}", VarName, Deserializer));
-
 										SW.WriteLine();
-										BlankLine = true;
 									}
 									else
-									{
-										BlankLine = false;
 										SW.WriteLine("var {0} = {1}", VarName, Deserializer);
-									}
 								}
 
-								if (!BlankLine) SW.WriteLine();
+								SW.WriteLine();
 								SW.WriteLine("fire{0}({1});", P.Name, Args);
 								SW.WriteLine("break;");
 							});

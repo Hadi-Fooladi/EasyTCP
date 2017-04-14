@@ -19,7 +19,7 @@ namespace EasyTCP
 				string Type;
 				if (HideType) Type = "";
 				else
-					Type = (D.isList ? string.Format("IReadOnlyCollection<{0}>", D.Type) : D.Type) + " ";
+					Type = (D.isList ? string.Format("ICollection<{0}>", D.Type) : D.Type) + " ";
 
 				S += String.Format("{0}{1}", Type, D.Name);
 			}

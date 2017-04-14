@@ -8,13 +8,33 @@ namespace EasyTCP
 	/// </summary>
 	internal class IndentedStreamWriter : StreamWriter
 	{
+		public IndentedStreamWriter(string path) : base(path) { }
+
 		public int IndentationCount;
 
-		public IndentedStreamWriter(string path) : base(path) { }
+		/// <summary>
+		/// true if there is a blank line before current line
+		/// </summary>
+		private bool BlankLine;
+
+		/// <summary>
+		/// Used to remove blank line after '{'
+		/// </summary>
+		private bool OpenBrace;
+
+		public override void WriteLine() => BlankLine = true;
 
 		public override void WriteLine(string value)
 		{
+			if (BlankLine)
+			{
+				if (!OpenBrace)
+					base.WriteLine();
+
+				BlankLine = false;
+			}
 			Indent();
+			OpenBrace = false;
 			base.WriteLine(value);
 		}
 
@@ -32,8 +52,11 @@ namespace EasyTCP
 		public void Block(Action A)
 		{
 			WriteLine("{");
+			OpenBrace = true;
 			Inside(A);
+			BlankLine = false; // Removing blank line before '}'
 			WriteLine("}");
+			WriteLine();
 		}
 
 		public void WriteDesc(string Desc)
@@ -64,7 +87,8 @@ namespace EasyTCP
 			{
 				string S;
 				while (null != (S = SR.ReadLine()))
-					WriteLine(S);
+					if (S == "") WriteLine();
+					else WriteLine(S);
 			}
 		}
 	}
