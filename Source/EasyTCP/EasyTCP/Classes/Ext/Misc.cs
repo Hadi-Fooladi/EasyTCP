@@ -6,8 +6,21 @@ namespace EasyTCP
 {
 	internal static class Misc
 	{
-		public static string Arguments(this Packet P) => Signature(P, true);
-		public static string Signature(this Packet P, bool HideType = false)
+		public static string Arguments(this Packet P)
+		{
+			string S = "";
+			var isFirst = true;
+			foreach (var D in P.Data)
+			{
+				if (isFirst) isFirst = false;
+				else S += ", ";
+
+				S += D.Name;
+			}
+			return S;
+		}
+
+		private static string Signature(this Packet P, bool UseArray)
 		{
 			string S = "";
 			var isFirst = true;
@@ -17,13 +30,19 @@ namespace EasyTCP
 				else S += ", ";
 
 				string Type;
-				if (HideType) Type = "";
+				if (D.isList)
+					Type = UseArray ?
+						D.Type + "[]" :
+						string.Format("ICollection<{0}>", D.Type);
 				else
-					Type = (D.isList ? string.Format("ICollection<{0}>", D.Type) : D.Type) + " ";
+					Type = D.Type;
 
-				S += String.Format("{0}{1}", Type, D.Name);
+				S += String.Format("{0} {1}", Type, D.Name);
 			}
 			return S;
 		}
+
+		public static string SendSignature(this Packet P) => P.Signature(false);
+		public static string EventSignature(this Packet P) => P.Signature(true);
 	}
 }

@@ -74,7 +74,7 @@ namespace EasyTCP
 				SW.WriteLine("public delegate void dlg({0} Sender);", ClassName);
 				foreach (var P in Packet)
 				{
-					string S = P.Signature();
+					string S = P.EventSignature();
 					if (S != "") S = ", " + S;
 
 					SW.WriteLine("public delegate void dlg{0}({1} Sender{2});", P.Name, ClassName, S);
@@ -115,7 +115,7 @@ namespace EasyTCP
 					foreach (var D in P.Data)
 						SW.WriteParameterDesc(D.Name, D.Desc);
 
-					SW.WriteLine("public void Send{0}({1})", P.Name, P.Signature());
+					SW.WriteLine("public void Send{0}({1})", P.Name, P.SendSignature());
 					SW.Block(() =>
 					{
 						SW.WriteLine("WriteCode({0});", P.Code);
@@ -236,7 +236,7 @@ namespace EasyTCP
 				Name, Signature, Arguments, string.IsNullOrEmpty(Arguments) ? "" : ", ");
 
 		private static void AddFireMethod(IndentedStreamWriter SW, PacketData P)
-			=> AddFireMethod(SW, P.Name, P.Signature(), P.Signature(true));
+			=> AddFireMethod(SW, P.Name, P.EventSignature(), P.Arguments());
 
 	}
 }
