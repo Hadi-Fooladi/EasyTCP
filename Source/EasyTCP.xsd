@@ -1,0 +1,48 @@
+<schema
+	version="1.0"
+	xmlns:EasyTCP="EasyTCP"
+	targetNamespace="EasyTCP"
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+
+	<element name="EasyTCP">
+		<complexType>
+			<sequence>
+				
+				<!-- Packet -->
+				<element name="Packet" minOccurs="0" maxOccurs="unbounded">
+					<complexType>
+						<sequence>
+							
+							<!-- Data -->
+							<element name="Data" minOccurs="0" maxOccurs="unbounded">
+								<complexType>
+									<attribute name="Name" type="string" use="required" />
+									<attribute name="Type" type="string" use="required" />
+									<attribute name="Desc" type="string" use="optional" />
+									<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
+								</complexType>
+							</element>
+						</sequence>
+
+						<!-- Packet Attributes -->
+						<attribute name="Code" type="int" use="required" />
+						<attribute name="Name" type="string" use="required" />
+						<attribute name="Desc" type="string" use="optional" />
+					</complexType>
+				</element>
+			</sequence>
+			
+			<!-- EasyTCP Attributes -->
+			<attribute name="Version" type="string" use="required" />
+			<attribute name="ClassName" type="string" use="required" />
+		</complexType>
+	</element>
+
+	<simpleType name="YesNo">
+		<restriction base="string">
+			<enumeration value="Yes"/>
+			<enumeration value="No"/>
+		</restriction>
+	</simpleType>
+</schema>

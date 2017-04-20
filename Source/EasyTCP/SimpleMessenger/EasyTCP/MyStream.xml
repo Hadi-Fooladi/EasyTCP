@@ -1,4 +1,10 @@
-﻿<EasyTCP Version="1.0" ClassName="MyStream">
+﻿<EasyTCP
+	Version="1.0"
+	ClassName="MyStream"
+	xmlns="EasyTCP"
+	xsi:schemaLocation="EasyTCP ../../../EasyTCP.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
 	<Packet Code="0" Name="Info">
 		<Data Name="Name" Type="string" />
 	</Packet>
