@@ -1,0 +1,81 @@
+<schema
+	version="4.2"
+	xmlns:ec="EasyConfig"
+	targetNamespace="EasyConfig"
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+
+	<element name="EasyConfig">
+		<complexType>
+			<sequence>
+				<element name="DataType" type="ec:DataType" minOccurs="0" maxOccurs="unbounded" />
+				<element name="Root" type="ec:Root" />
+				<element name="DataType" type="ec:DataType" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="Version" type="string" use="required" />
+		</complexType>
+	</element>
+
+	<simpleType name="YesNo">
+		<restriction base="string">
+			<enumeration value="Yes"/>
+			<enumeration value="No"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="AccessModifier">
+		<restriction base="string">
+			<enumeration value="public"/>
+			<enumeration value="internal"/>
+		</restriction>
+	</simpleType>
+
+	<complexType name="Attribute">
+		<attribute name="Name" type="string" use="required" />
+		<attribute name="Type" type="string" use="required" />
+		<attribute name="Desc" type="string" use="optional" />
+		<attribute name="Default" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="Field">
+		<attribute name="Name" type="string" use="required" />
+		<attribute name="Type" type="string" use="required" />
+		<attribute name="Desc" type="string" use="optional" />
+		<attribute name="TagName" type="string" use="optional" />
+		<attribute name="Multiple" type="ec:YesNo" use="optional" />
+	</complexType>
+
+	<complexType name="DataType">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="Field" type="ec:Field" />
+			<element name="Attribute" type="ec:Attribute" />
+		</choice>
+		<attribute name="Name" type="string" use="required" />
+		<attribute name="Desc" type="string" use="optional" />
+		<attribute name="Inherit" type="string" use="optional" />
+		<attribute name="Partial" type="ec:YesNo" use="optional" />
+		<attribute name="Access" type="ec:AccessModifier" use="optional" />
+	</complexType>
+
+	<complexType name="Node">
+		<complexContent>
+			<extension base="ec:DataType">
+				<choice minOccurs="0" maxOccurs="unbounded">
+					<element name="Node" type="ec:Node" />
+					<element name="DataType" type="ec:DataType" />
+				</choice>
+				<attribute name="Multiple" type="ec:YesNo" use="optional" />
+				<attribute name="TagName" type="string" use="optional" />
+				<attribute name="TypeName" type="string" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="Root">
+		<complexContent>
+			<extension base="ec:Node">
+				<attribute name="Version" type="string" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

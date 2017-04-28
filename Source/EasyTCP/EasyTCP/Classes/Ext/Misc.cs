@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Packet = Config.EasyTCP.PacketData;
+using Packet = Config.EasyTCP.StreamData.PacketData;
 
 namespace EasyTCP
 {

@@ -87,8 +87,7 @@ namespace EasyTCP
 			catch (Exception E)
 			{
 				Console.WriteLine("----------------------------------------");
-				Console.WriteLine("Error");
-				Console.WriteLine("Message" + E.Message);
+				Console.WriteLine("Error: " + E.Message);
 				Console.WriteLine("Stack Trace: ");
 				Console.WriteLine(E.StackTrace);
 				Console.WriteLine("----------------------------------------");

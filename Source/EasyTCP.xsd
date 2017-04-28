@@ -8,34 +8,45 @@
 	<element name="EasyTCP">
 		<complexType>
 			<sequence>
-				
-				<!-- Packet -->
-				<element name="Packet" minOccurs="0" maxOccurs="unbounded">
+
+				<!-- Stream -->
+				<element name="Stream">
 					<complexType>
 						<sequence>
-							
-							<!-- Data -->
-							<element name="Data" minOccurs="0" maxOccurs="unbounded">
+
+							<!-- Packet -->
+							<element name="Packet" minOccurs="0" maxOccurs="unbounded">
 								<complexType>
+									<sequence>
+
+										<!-- Data -->
+										<element name="Data" minOccurs="0" maxOccurs="unbounded">
+											<complexType>
+												<attribute name="Name" type="string" use="required" />
+												<attribute name="Type" type="string" use="required" />
+												<attribute name="Desc" type="string" use="optional" />
+												<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
+											</complexType>
+										</element>
+									</sequence>
+
+									<!-- Packet Attributes -->
+									<attribute name="Code" type="int" use="required" />
 									<attribute name="Name" type="string" use="required" />
-									<attribute name="Type" type="string" use="required" />
 									<attribute name="Desc" type="string" use="optional" />
-									<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
 								</complexType>
 							</element>
 						</sequence>
 
-						<!-- Packet Attributes -->
-						<attribute name="Code" type="int" use="required" />
-						<attribute name="Name" type="string" use="required" />
-						<attribute name="Desc" type="string" use="optional" />
+						<!-- Stream Attributes -->
+						<attribute name="Version" type="string" use="required" />
+						<attribute name="ClassName" type="string" use="required" />
 					</complexType>
 				</element>
 			</sequence>
 			
 			<!-- EasyTCP Attributes -->
 			<attribute name="Version" type="string" use="required" />
-			<attribute name="ClassName" type="string" use="required" />
 		</complexType>
 	</element>
 

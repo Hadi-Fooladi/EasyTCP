@@ -28,15 +28,15 @@ namespace EasyTCP
 
 		public void Generate(IndentedStreamWriter SW)
 		{
-			SW.WriteLine("internal class {0}", ClassName);
+			SW.WriteLine("internal class {0}", Stream.ClassName);
 			SW.Block(() =>
 			{
 				// Version Field
-				SW.WriteLine("public static readonly Version Version = new Version({0}, {1});", Version.Major, Version.Minor);
+				SW.WriteLine("public static readonly Version Version = new Version(\"{0}\");", Stream.Version);
 				SW.WriteLine();
 
 				#region Constructor
-				SW.WriteLine("public {0}()", ClassName);
+				SW.WriteLine("public {0}()", Stream.ClassName);
 				SW.Block(() =>
 				{
 					SW.WriteLine("MS = new MemoryStream(B);");
@@ -71,13 +71,13 @@ namespace EasyTCP
 
 				#region Delegates
 				SW.WriteLine("#region Delegates");
-				SW.WriteLine("public delegate void dlg({0} Sender);", ClassName);
-				foreach (var P in Packet)
+				SW.WriteLine("public delegate void dlg({0} Sender);", Stream.ClassName);
+				foreach (var P in Stream.Packet)
 				{
 					string S = P.EventSignature();
 					if (S != "") S = ", " + S;
 
-					SW.WriteLine("public delegate void dlg{0}({1} Sender{2});", P.Name, ClassName, S);
+					SW.WriteLine("public delegate void dlg{0}({1} Sender{2});", P.Name, Stream.ClassName, S);
 				}
 
 				SW.WriteLine("#endregion");
@@ -89,14 +89,14 @@ namespace EasyTCP
 
 				// Events
 				SW.WriteLine("public event dlg OnClosed;");
-				foreach (var P in Packet)
+				foreach (var P in Stream.Packet)
 					SW.WriteLine("public event dlg{0} On{0};", P.Name);
 
 				SW.WriteLine();
 
 				// Firing Methods
 				AddFireMethod(SW, "Closed", "", "");
-				foreach (var P in Packet)
+				foreach (var P in Stream.Packet)
 					AddFireMethod(SW, P);
 
 				SW.WriteLine("#endregion");
@@ -108,7 +108,7 @@ namespace EasyTCP
 				SW.WriteLine();
 
 				#region Send Methods
-				foreach (var P in Packet)
+				foreach (var P in Stream.Packet)
 				{
 					// Desc
 					SW.WriteDesc(P.Desc);
@@ -174,7 +174,7 @@ namespace EasyTCP
 							SW.WriteLine("return; // Exit the thread");
 						});
 
-						foreach (var P in Packet)
+						foreach (var P in Stream.Packet)
 						{
 							SW.WriteLine();
 							SW.WriteLine("case {0}: // {1}", P.Code, P.Name);
@@ -235,7 +235,7 @@ namespace EasyTCP
 				"protected void fire{0}({1}) {{ if (On{0} != null) On{0}(this{3}{2}); }}",
 				Name, Signature, Arguments, string.IsNullOrEmpty(Arguments) ? "" : ", ");
 
-		private static void AddFireMethod(IndentedStreamWriter SW, PacketData P)
+		private static void AddFireMethod(IndentedStreamWriter SW, StreamData.PacketData P)
 			=> AddFireMethod(SW, P.Name, P.EventSignature(), P.Arguments());
 
 	}

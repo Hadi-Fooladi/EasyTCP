@@ -1,1 +1,1 @@
-EasyConfig -ns Config -gs Config.xml -o EasyTCP.cs Config.EasyConfig
+EasyConfig -ns Config -o ..\EasyTCP\EasyTCP\Classes\EasyTCP.cs Config.EasyConfig

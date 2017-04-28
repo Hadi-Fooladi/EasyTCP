@@ -1,16 +1,26 @@
-<Root Name="EasyTCP" Version="1.0">
-	<Attribute Name="ClassName" Type="string" />
+<EasyConfig
+	Version="4.2"
+	xmlns="EasyConfig"
+	xsi:schemaLocation="EasyConfig Schema.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<Root Name="EasyTCP" Version="3.0">
+		<Node Name="Stream">
+			<Attribute Name="Version" Type="string" />
+			<Attribute Name="ClassName" Type="string" />
 
-	<Node Name="Packet" Multiple="Yes">
-		<Attribute Name="Code" Type="int" />
-		<Attribute Name="Name" Type="string" Desc="Used for method, event and delegate names (Must be unique)" />
-		<Attribute Name="Desc" Type="string" Default="" />
+			<Node Name="Packet" Multiple="Yes">
+				<Attribute Name="Code" Type="int" />
+				<Attribute Name="Name" Type="string" Desc="Used for method, event and delegate names (Must be unique)" />
+				<Attribute Name="Desc" Type="string" Default="null" />
 
-		<Node Name="Data" Type="struct" Multiple="Yes">
-			<Attribute Name="Name" Type="string" />
-			<Attribute Name="Type" Type="string" />
-			<Attribute Name="Desc" Type="string" Default="" />
-			<Attribute Name="isList" Type="yn" Default="false" />
+				<Node Name="Data" Multiple="Yes">
+					<Attribute Name="Name" Type="string" />
+					<Attribute Name="Type" Type="string" />
+					<Attribute Name="Desc" Type="string" Default="null" />
+					<Attribute Name="isList" Type="yn" Default="false" />
+				</Node>
+			</Node>
 		</Node>
-	</Node>
-</Root>
+	</Root>
+</EasyConfig>
