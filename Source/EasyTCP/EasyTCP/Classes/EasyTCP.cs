@@ -10,9 +10,10 @@ namespace Config
 	internal class EasyTCP
 	{
 		public readonly Version Version;
-		public static readonly Version ExpectedVersion = new Version(3, 0);
+		public static readonly Version ExpectedVersion = new Version(3, 1);
 
 		public readonly StreamData Stream;
+		public readonly List<DataType> DataTypes;
 
 		public EasyTCP(string Filename)
 		{
@@ -29,6 +30,10 @@ namespace Config
 			var StreamNode = Node.SelectSingleNode("*[local-name()='Stream']");
 			if (StreamNode != null)
 				Stream = new StreamData(StreamNode);
+
+			DataTypes = new List<DataType>();
+			foreach (XmlNode X in Node.SelectNodes("*[local-name()='DataType']"))
+				DataTypes.Add(new DataType(X));
 		}
 
 		internal class StreamData
@@ -84,6 +89,35 @@ namespace Config
 						Desc = Node.Attr("Desc", null);
 						isList = Node.ynAttr("isList", false);
 					}
+				}
+			}
+		}
+
+		internal class DataType
+		{
+			public readonly string Name;
+			public readonly List<Field> Fields;
+
+			public DataType(XmlNode Node)
+			{
+				Name = Node.Attr("Name");
+
+				Fields = new List<Field>();
+				foreach (XmlNode X in Node.SelectNodes("*[local-name()='Field']"))
+					Fields.Add(new Field(X));
+			}
+
+			internal class Field
+			{
+				public readonly string Name;
+				public readonly string Type;
+				public readonly bool isList;
+
+				public Field(XmlNode Node)
+				{
+					Name = Node.Attr("Name");
+					Type = Node.Attr("Type");
+					isList = Node.ynAttr("isList", false);
 				}
 			}
 		}

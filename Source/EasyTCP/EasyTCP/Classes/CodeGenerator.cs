@@ -28,6 +28,7 @@ namespace EasyTCP
 
 		public void Generate(IndentedStreamWriter SW)
 		{
+			// Writing Stream Class
 			SW.WriteLine("internal class {0}", Stream.ClassName);
 			SW.Block(() =>
 			{
@@ -228,6 +229,75 @@ namespace EasyTCP
 				});
 				#endregion
 			});
+
+			// Writing DataTypes
+			foreach (var DT in DataTypes)
+			{
+				SW.WriteLine($"internal struct {DT.Name}");
+				SW.Block(() =>
+				{
+					string FieldType(DataType.Field F) => F.isList ? $"IList<{F.Type}>" : F.Type;
+
+					// Declaring Fields
+					foreach (var Field in DT.Fields)
+						SW.WriteLine($"public {FieldType(Field)} {Field.Name};");
+
+					SW.WriteLine();
+					SW.WriteLine($"public {DT.Name}(BinaryReader BR)");
+					SW.Block(() =>
+					{
+						foreach (var Field in DT.Fields)
+						{
+							var Deserializer = dicRead.ContainsKey(Field.Type)
+								? string.Format($"BR.{dicRead[Field.Type]}();")
+								: string.Format($"new {Field.Type}(BR);");
+
+							if (Field.isList)
+							{
+								SW.WriteLine();
+								var CountVar = Field.Name + "Count";
+								SW.WriteLine($"var {CountVar} = BR.ReadUInt16();");
+								SW.WriteLine($"{Field.Name} = new {Field.Type}[{CountVar}];");
+								SW.WriteLine($"for (ushort i = 0; i < {CountVar}; i++)");
+								SW.Inside(() => SW.WriteLine($"{Field.Name}[i] = {Deserializer}"));
+								SW.WriteLine();
+							}
+							else
+								SW.WriteLine($"{Field.Name} = {Deserializer}");
+						}
+					});
+				});
+			}
+
+			if (DataTypes.Count <= 0) return;
+
+			// Writing Extension Methods
+			SW.WriteLine("internal static class BinaryWriterExt");
+			SW.Block(() =>
+			{
+				foreach (var DT in DataTypes)
+				{
+					SW.WriteLine($"public static void Write(this BinaryWriter BW, {DT.Name} Obj)");
+					SW.Block(() =>
+					{
+						foreach (var Field in DT.Fields)
+						{
+							var Name = $"Obj.{Field.Name}";
+							if (Field.isList)
+							{
+								SW.WriteLine();
+								SW.WriteLine($"BW.Write((ushort){Name}.Count);");
+								SW.WriteLine($"foreach (var X in {Name})");
+								SW.Inside(() => SW.WriteLine("BW.Write(X);"));
+								SW.WriteLine();
+							}
+							else
+								SW.WriteLine($"BW.Write({Name});");
+						}
+					});
+				}
+			});
+
 		}
 
 		private static void AddFireMethod(IndentedStreamWriter SW, string Name, string Signature, string Arguments)

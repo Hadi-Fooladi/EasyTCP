@@ -1,27 +1,65 @@
-﻿<EasyTCP Version="1.0" ClassName="SampleStream">
-	<Packet Code="0" Name="Grades" Desc="Sending Grades">
-		<Data Name="Name" Type="string" />
-		<Data Name="Grade" Type="int" isList="Yes" />
-	</Packet>
+﻿<EasyTCP
+	Version="3.1"
+	xmlns="EasyTCP"
+	xsi:schemaLocation="EasyTCP ../../EasyTCP.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<Packet Code="1" Name="Status" Desc="Sending Status">
-		<Data Name="Code" Type="string" Desc="SSN" />
-		<Data Name="Married" Type="bool" />
-		<Data Name="Age" Type="int" />
-		<Data Name="Car" Type="Car" />
-	</Packet>
+	<Stream ClassName="SampleStream" Version="1.0">
+		<Packet Code="0" Name="Grades" Desc="Sending Grades">
+			<Data Name="Name" Type="string" />
+			<Data Name="Grade" Type="int" isList="Yes" />
+		</Packet>
 
-	<Packet Code="2" Name="Status2">
-		<Data Name="Code" Type="string" Desc="SSN" />
-		<Data Name="Married" Type="bool" />
-		<Data Name="Age" Type="int" />
-	</Packet>
+		<Packet Code="1" Name="Status" Desc="Sending Status">
+			<Data Name="Code" Type="string" Desc="SSN" />
+			<Data Name="Married" Type="bool" />
+			<Data Name="Age" Type="int" />
+			<Data Name="Car" Type="Car" />
+		</Packet>
 
-	<Packet Code="3" Name="Lists">
-		<Data Name="Animals" Type="string" isList="Yes" />
-		<Data Name="Numbers" Type="float" isList="Yes" />
-		<Data Name="Positions" Type="Vector" isList="Yes" />
-	</Packet>
+		<Packet Code="2" Name="Status2">
+			<Data Name="Code" Type="string" Desc="SSN" />
+			<Data Name="Married" Type="bool" />
+			<Data Name="Age" Type="int" />
+		</Packet>
 
-	<Packet Code="4" Name="Signal" Desc="No Data" />
+		<Packet Code="3" Name="Lists">
+			<Data Name="Animals" Type="string" isList="Yes" />
+			<Data Name="Numbers" Type="float" isList="Yes" />
+			<Data Name="Positions" Type="Vector" isList="Yes" />
+		</Packet>
+
+		<Packet Code="4" Name="Signal" Desc="No Data" />
+
+		<Packet Code="5" Name="Pos">
+			<Data Name="Pos2D" Type="Vector2" />
+			<Data Name="Pos3D" Type="Vector3" />
+		</Packet>
+
+		<Packet Code="6" Name="Points">
+			<Data Name="V" Type="Vector3" isList="Yes" />
+		</Packet>
+
+		<Packet Code="7" Name="Numbers">
+			<Data Name="A" Type="IntArray" />
+		</Packet>
+
+		<Packet Code="8" Name="Numbers2">
+			<Data Name="AA" Type="IntArray" isList="Yes" />
+		</Packet>
+	</Stream>
+	
+	<DataType Name="Vector2">
+		<Field Name="x" Type="float" />
+		<Field Name="y" Type="float" />
+	</DataType>
+
+	<DataType Name="Vector3">
+		<Field Name="V" Type="Vector2" />
+		<Field Name="z" Type="float" />
+	</DataType>
+
+	<DataType Name="IntArray">
+		<Field Name="Numbers" Type="int" isList="Yes" />
+	</DataType>
 </EasyTCP>

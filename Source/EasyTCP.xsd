@@ -1,5 +1,5 @@
 <schema
-	version="1.0"
+	version="1.1"
 	xmlns:EasyTCP="EasyTCP"
 	targetNamespace="EasyTCP"
 	elementFormDefault="qualified"
@@ -8,6 +8,7 @@
 	<element name="EasyTCP">
 		<complexType>
 			<sequence>
+				<element name="DataType" type="EasyTCP:DataType" minOccurs="0" maxOccurs="unbounded" />
 
 				<!-- Stream -->
 				<element name="Stream">
@@ -43,8 +44,10 @@
 						<attribute name="ClassName" type="string" use="required" />
 					</complexType>
 				</element>
+
+				<element name="DataType" type="EasyTCP:DataType" minOccurs="0" maxOccurs="unbounded" />
 			</sequence>
-			
+
 			<!-- EasyTCP Attributes -->
 			<attribute name="Version" type="string" use="required" />
 		</complexType>
@@ -56,4 +59,19 @@
 			<enumeration value="No"/>
 		</restriction>
 	</simpleType>
+
+	<complexType name="DataType">
+		<sequence>
+			<element name="Field" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<attribute name="Name" type="string" use="required" />
+					<attribute name="Type" type="string" use="required" />
+					<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
+				</complexType>
+			</element>
+		</sequence>
+
+		<!-- DataType Attributes -->
+		<attribute name="Name" type="string" use="required" />
+	</complexType>
 </schema>

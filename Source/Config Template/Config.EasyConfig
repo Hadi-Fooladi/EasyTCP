@@ -4,7 +4,7 @@
 	xsi:schemaLocation="EasyConfig Schema.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	
-	<Root Name="EasyTCP" Version="3.0">
+	<Root Name="EasyTCP" Version="3.1">
 		<Node Name="Stream">
 			<Attribute Name="Version" Type="string" />
 			<Attribute Name="ClassName" Type="string" />
@@ -20,6 +20,16 @@
 					<Attribute Name="Desc" Type="string" Default="null" />
 					<Attribute Name="isList" Type="yn" Default="false" />
 				</Node>
+			</Node>
+		</Node>
+
+		<Node Name="DataTypes" TagName="DataType" TypeName="DataType" Multiple="Yes">
+			<Attribute Name="Name" Type="string" />
+
+			<Node Name="Fields" TagName="Field" TypeName="Field" Multiple="Yes">
+				<Attribute Name="Name" Type="string" />
+				<Attribute Name="Type" Type="string" />
+				<Attribute Name="isList" Type="yn" Default="false" />
 			</Node>
 		</Node>
 	</Root>
