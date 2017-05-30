@@ -4,7 +4,7 @@
 	xsi:schemaLocation="EasyConfig Schema.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	
-	<Root Name="EasyTCP" Version="3.2">
+	<Root Name="EasyTCP" Version="4.0">
 		<Node Name="Stream">
 			<Attribute Name="Version" Type="string" />
 			<Attribute Name="ClassName" Type="string" />

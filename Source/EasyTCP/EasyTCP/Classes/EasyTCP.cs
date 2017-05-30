@@ -10,7 +10,7 @@ namespace Config
 	internal class EasyTCP
 	{
 		public readonly Version Version;
-		public static readonly Version ExpectedVersion = new Version(3, 2);
+		public static readonly Version ExpectedVersion = new Version(4, 0);
 
 		public readonly StreamData Stream;
 		public readonly List<DataType> DataTypes;

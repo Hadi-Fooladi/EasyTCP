@@ -155,15 +155,15 @@ public void ForceClose() { Running = false; T.Join(); }
 private void WriteCode(ushort Code)
 {
 	BW.Write(Code);
-	MS.Position += 2;
+	MS.Position += 4;
 }
 
 private void Flush()
 {
-	var Len = (ushort)(MS.Position - 4);
+	var Len = (int)(MS.Position - 6);
 	MS.Position = 2;
 	BW.Write(Len);
-	NS.Write(B, 0, Len + 4);
+	NS.Write(B, 0, Len + 6);
 	MS.Position = 0;
 }</value>
   </data>

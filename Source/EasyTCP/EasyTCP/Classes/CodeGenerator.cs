@@ -37,9 +37,10 @@ namespace EasyTCP
 				SW.WriteLine();
 
 				#region Constructor
-				SW.WriteLine("public {0}()", Stream.ClassName);
+				SW.WriteLine($"public {Stream.ClassName}(int WriteBufferLength = 65536)");
 				SW.Block(() =>
 				{
+					SW.WriteLine("B = new byte[WriteBufferLength];");
 					SW.WriteLine("MS = new MemoryStream(B);");
 					SW.WriteLine("BW = new BinaryWriter(MS, Encoding.Unicode);");
 					SW.WriteLine();
@@ -59,9 +60,9 @@ namespace EasyTCP
 				SW.WriteLine("private NetworkStream NS;");
 				SW.WriteLine();
 
+				SW.WriteLine("private readonly byte[] B;");
 				SW.WriteLine("private readonly MemoryStream MS;");
 				SW.WriteLine("private readonly BinaryWriter BW;");
-				SW.WriteLine("private readonly byte[] B = new byte[65536];");
 				SW.WriteLine();
 
 				SW.WriteLine("private readonly Thread T;");
@@ -154,12 +155,8 @@ namespace EasyTCP
 						});
 						SW.WriteLine();
 
-						SW.WriteLine("ushort");
-						SW.Inside(() =>
-						{
-							SW.WriteLine("Code = BR.ReadUInt16(),");
-							SW.WriteLine("Len = BR.ReadUInt16();");
-						});
+						SW.WriteLine("ushort Code = BR.ReadUInt16();");
+						SW.WriteLine("int Len = BR.ReadInt32();");
 						SW.WriteLine();
 
 						SW.WriteLine("switch (Code)");
