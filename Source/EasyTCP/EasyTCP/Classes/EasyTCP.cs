@@ -10,7 +10,7 @@ namespace Config
 	internal class EasyTCP
 	{
 		public readonly Version Version;
-		public static readonly Version ExpectedVersion = new Version(3, 1);
+		public static readonly Version ExpectedVersion = new Version(3, 2);
 
 		public readonly StreamData Stream;
 		public readonly List<DataType> DataTypes;
@@ -96,11 +96,20 @@ namespace Config
 		internal class DataType
 		{
 			public readonly string Name;
+			public readonly bool Partial;
+
+			/// <summary>
+			/// By default datatype is struct
+			/// </summary>
+			public readonly bool isClass;
+
 			public readonly List<Field> Fields;
 
 			public DataType(XmlNode Node)
 			{
 				Name = Node.Attr("Name");
+				Partial = Node.ynAttr("Partial", false);
+				isClass = Node.ynAttr("isClass", false);
 
 				Fields = new List<Field>();
 				foreach (XmlNode X in Node.SelectNodes("*[local-name()='Field']"))

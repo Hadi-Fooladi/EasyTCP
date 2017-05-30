@@ -1,5 +1,5 @@
 ﻿<EasyTCP
-	Version="3.1"
+	Version="3.2"
 	xmlns="EasyTCP"
 	xsi:schemaLocation="EasyTCP ../../EasyTCP.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -54,12 +54,12 @@
 		<Field Name="y" Type="float" />
 	</DataType>
 
-	<DataType Name="Vector3">
+	<DataType Name="Vector3" isClass="Yes">
 		<Field Name="V" Type="Vector2" />
 		<Field Name="z" Type="float" />
 	</DataType>
 
-	<DataType Name="IntArray">
+	<DataType Name="IntArray" Partial="Yes">
 		<Field Name="Numbers" Type="int" isList="Yes" />
 	</DataType>
 </EasyTCP>

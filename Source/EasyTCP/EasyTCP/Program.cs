@@ -106,7 +106,7 @@ namespace EasyTCP
 
 			Console.WriteLine();
 			Console.WriteLine("Usage: ");
-			Console.WriteLine("   EasyConfig [Options] File");
+			Console.WriteLine("   EasyTCP [Options] File");
 			Console.WriteLine();
 			Console.WriteLine("Options:");
 

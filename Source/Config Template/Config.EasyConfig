@@ -4,7 +4,7 @@
 	xsi:schemaLocation="EasyConfig Schema.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	
-	<Root Name="EasyTCP" Version="3.1">
+	<Root Name="EasyTCP" Version="3.2">
 		<Node Name="Stream">
 			<Attribute Name="Version" Type="string" />
 			<Attribute Name="ClassName" Type="string" />
@@ -25,6 +25,8 @@
 
 		<Node Name="DataTypes" TagName="DataType" TypeName="DataType" Multiple="Yes">
 			<Attribute Name="Name" Type="string" />
+			<Attribute Name="Partial" Type="yn" Default="false" />
+			<Attribute Name="isClass" Type="yn" Default="false" Desc="By default datatype is struct" />
 
 			<Node Name="Fields" TagName="Field" TypeName="Field" Multiple="Yes">
 				<Attribute Name="Name" Type="string" />

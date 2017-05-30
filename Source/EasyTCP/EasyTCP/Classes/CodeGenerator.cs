@@ -233,7 +233,7 @@ namespace EasyTCP
 			// Writing DataTypes
 			foreach (var DT in DataTypes)
 			{
-				SW.WriteLine($"internal struct {DT.Name}");
+				SW.WriteLine($"internal{(DT.Partial ? " partial" : "")} {(DT.isClass ? "class" : "struct")} {DT.Name}");
 				SW.Block(() =>
 				{
 					string FieldType(DataType.Field F) => F.isList ? $"IList<{F.Type}>" : F.Type;
