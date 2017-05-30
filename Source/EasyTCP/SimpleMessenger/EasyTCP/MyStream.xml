@@ -1,26 +1,20 @@
 ﻿<EasyTCP
-	Version="1.0"
-	ClassName="MyStream"
+	Version="4.0"
 	xmlns="EasyTCP"
 	xsi:schemaLocation="EasyTCP ../../../EasyTCP.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<Packet Code="0" Name="Info">
-		<Data Name="Name" Type="string" />
-	</Packet>
+	<Stream ClassName="MyStream" Version="2.0">
+		<Packet Code="0" Name="Info">
+			<Data Name="Name" Type="string" />
+		</Packet>
 
-	<Packet Code="1" Name="Message">
-		<Data Name="Message" Type="string" />
-	</Packet>
+		<Packet Code="1" Name="Message">
+			<Data Name="Message" Type="string" />
+		</Packet>
 
-	<Packet Code="2" Name="PicHeader">
-		<Data Name="id" Type="long" />
-		<Data Name="SegmentCount" Type="int" />
-	</Packet>
-
-	<Packet Code="3" Name="PicSegment">
-		<Data Name="id" Type="long" />
-		<Data Name="Num" Type="int" />
-		<Data Name="Data" Type="ByteArray" />
-	</Packet>
+		<Packet Code="2" Name="Picture">
+			<Data Name="Data" Type="ByteArray" />
+		</Packet>
+	</Stream>
 </EasyTCP>

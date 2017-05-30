@@ -50,11 +50,15 @@ namespace SimpleMessenger
 
 		private void SendMessage(MyStream Exclude, string Msg)
 		{
+			Do4All(MS => MS.SendMessage(Msg), Exclude);
+			Dispatcher.Invoke(() => TB.Inlines.Add(Msg + Environment.NewLine));
+		}
+
+		private void Do4All(Action<MyStream> Act, MyStream Exclude = null)
+		{
 			foreach (var MS in Dic.Keys)
 				if (MS != Exclude)
-					MS.SendMessage(Msg);
-
-			Dispatcher.Invoke(() => TB.Inlines.Add(Msg + Environment.NewLine));
+					Act(MS);
 		}
 
 		#region Event Handlers
@@ -63,12 +67,11 @@ namespace SimpleMessenger
 			if (Listener.Pending())
 				try
 				{
-					var MyStream = new MyStream();
+					var MyStream = new MyStream(Constants.BufferSize);
 					MyStream.OnInfo += MyStream_OnInfo;
 					MyStream.OnClosed += MyStream_OnClosed;
 					MyStream.OnMessage += MyStream_OnMessage;
-					MyStream.OnPicHeader += MyStream_OnPicHeader;
-					MyStream.OnPicSegment += MyStream_OnPicSegment;
+					MyStream.OnPicture += MyStream_OnPicture;
 					MyStream.Connect(Listener.AcceptTcpClient());
 				}
 				catch (Exception E)
@@ -82,17 +85,7 @@ namespace SimpleMessenger
 				}
 		}
 
-		private void MyStream_OnPicHeader(MyStream Sender, long id, int SegmentCount)
-		{
-			foreach (var MS in Dic.Keys)
-				MS.SendPicHeader(id, SegmentCount);
-		}
-
-		private void MyStream_OnPicSegment(MyStream Sender, long id, int Num, ByteArray Data)
-		{
-			foreach (var MS in Dic.Keys)
-				MS.SendPicSegment(id, Num, Data);
-		}
+		private void MyStream_OnPicture(MyStream Sender, ByteArray Data) => Do4All(MS => MS.SendPicture(Data), Sender);
 
 		private void MyStream_OnClosed(MyStream Sender)
 		{

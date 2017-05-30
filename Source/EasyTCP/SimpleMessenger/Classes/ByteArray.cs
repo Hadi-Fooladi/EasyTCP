@@ -4,7 +4,7 @@ namespace SimpleMessenger
 {
 	internal class ByteArray
 	{
-		public ByteArray(byte[] B, int Start, ushort Count)
+		public ByteArray(byte[] B, int Start, int Count)
 		{
 			this.B = B;
 			this.Start = Start;
@@ -14,12 +14,11 @@ namespace SimpleMessenger
 		public ByteArray(BinaryReader BR)
 		{
 			Start = 0;
-			Count = BR.ReadUInt16();
+			Count = BR.ReadInt32();
 			B = BR.ReadBytes(Count);
 		}
 
 		public readonly byte[] B;
-		public readonly int Start;
-		public readonly ushort Count;
+		public readonly int Start, Count;
 	}
 }
