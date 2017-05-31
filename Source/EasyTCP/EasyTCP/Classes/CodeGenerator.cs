@@ -6,7 +6,12 @@ namespace EasyTCP
 
 	internal class CodeGenerator : Config.EasyTCP
 	{
-		public CodeGenerator(string Filename) : base(Filename) { }
+		public CodeGenerator(string Filename, bool UseNullPropagation) : base(Filename)
+		{
+			this.UseNullPropagation = UseNullPropagation;
+		}
+
+		private readonly bool UseNullPropagation;
 
 		private static readonly Dictionary<string, string> dicRead = new Dictionary<string, string>
 		{
@@ -94,12 +99,15 @@ namespace EasyTCP
 				foreach (var P in Stream.Packet)
 					SW.WriteLine("public event dlg{0} On{0};", P.Name);
 
-				SW.WriteLine();
-
-				// Firing Methods
-				AddFireMethod(SW, "Closed", "", "");
-				foreach (var P in Stream.Packet)
-					AddFireMethod(SW, P);
+				if (!UseNullPropagation)
+				{
+					SW.WriteLine();
+					
+					// Firing Methods
+					AddFireMethod(SW, "Closed", "", "");
+					foreach (var P in Stream.Packet)
+						AddFireMethod(SW, P);
+				}
 
 				SW.WriteLine("#endregion");
 				SW.WriteLine();
@@ -168,7 +176,7 @@ namespace EasyTCP
 							SW.WriteLine();
 
 							SW.WriteLine("Client.Close();");
-							SW.WriteLine("fireClosed();");
+							SW.WriteLine(UseNullPropagation ? "OnClosed?.Invoke(this);" : "fireClosed();");
 							SW.WriteLine("return; // Exit the thread");
 						});
 
@@ -188,7 +196,7 @@ namespace EasyTCP
 												string.Format("BR.{0}();", dicRead[D.Type]) :
 												string.Format("new {0}(BR);", D.Type);
 
-									if (Args != "")
+									if (UseNullPropagation || Args.Length > 0)
 										Args += ", ";
 
 									Args += VarName;
@@ -208,7 +216,7 @@ namespace EasyTCP
 								}
 
 								SW.WriteLine();
-								SW.WriteLine("fire{0}({1});", P.Name, Args);
+								SW.WriteLine(UseNullPropagation ? "On{0}?.Invoke(this{1});" : "fire{0}({1});", P.Name, Args);
 								SW.WriteLine("break;");
 							});
 						}

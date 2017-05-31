@@ -13,13 +13,17 @@ namespace EasyTCP
 			{
 				string InputPath, OutputPath;
 
-				// Adding Parameters
+				#region Adding Parameters
 				OneStringParameter
 					pNameSpace = new OneStringParameter("ns", "name", "namespace name (Default: no namespace)"),
 					pOutputPath = new OneStringParameter("o", "path", "Output file (Default: Same name as file with '.cs' extension in the current folder)");
 
+				var pUNP = new FlagParameter("unp", "Use null propagation");
+
 				P.Add(pOutputPath);
 				P.Add(pNameSpace);
+				P.Add(pUNP);
+				#endregion
 
 				#region Arguments Analysis
 				try
@@ -59,7 +63,7 @@ namespace EasyTCP
 				}
 				#endregion
 
-				var CG = new CodeGenerator(InputPath);
+				var CG = new CodeGenerator(InputPath, pUNP.Exist);
 
 				using (var SW = new IndentedStreamWriter(OutputPath))
 				{

@@ -42,6 +42,7 @@
     <Compile Include="Classes\Ext\Misc.cs" />
     <Compile Include="Classes\Ext\XML.cs" />
     <Compile Include="Classes\IndentedStreamWriter.cs" />
+    <Compile Include="Classes\Parameters\FlagParameter.cs" />
     <Compile Include="Classes\Parameters\OneStringParameter.cs" />
     <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Program.cs" />
