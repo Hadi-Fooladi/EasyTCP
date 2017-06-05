@@ -128,6 +128,8 @@ namespace EasyTCP
 					SW.WriteLine("public void Send{0}({1})", P.Name, P.SendSignature());
 					SW.Block(() =>
 					{
+						SW.WriteLine("if (Closing) return;");
+						SW.WriteLine();
 						SW.WriteLine("WriteCode({0});", P.Code);
 
 						foreach (var D in P.Data)

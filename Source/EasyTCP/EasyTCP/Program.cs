@@ -32,11 +32,17 @@ namespace EasyTCP
 						ndx = 0,
 						n = args.Length - 1;
 
+					if (n < 0)
+					{
+						PrintUsage();
+						return;
+					}
+
 					while (ndx < n)
 					{
 						string Option = args[ndx++];
 						if (Option[0] != '-')
-							throw new Exception();
+							throw new Exception("Parameters must be start with '-'");
 
 						IParameter Param = null;
 						string Code = Option.Substring(1);
@@ -118,7 +124,7 @@ namespace EasyTCP
 			foreach (var X in P)
 				MaxLen = Math.Max(MaxLen, (X.Code + X.CodeParams).Length);
 
-			var Format = string.Format("{{0,-{0}}}", MaxLen + 1);
+			var Format = $"{{0,-{MaxLen + 1}}}";
 			foreach (var X in P)
 			{
 				Console.Write("   -");
