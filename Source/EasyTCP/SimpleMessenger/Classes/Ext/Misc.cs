@@ -9,5 +9,7 @@ namespace SimpleMessenger
 			BW.Write(A.Count);
 			BW.Write(A.B, A.Start, A.Count);
 		}
+
+		public static void Read(this BinaryReader BR, out ByteArray A) => A = new ByteArray(BR);
 	}
 }

@@ -3,36 +3,34 @@
 	xmlns="EasyConfig"
 	xsi:schemaLocation="EasyConfig Schema.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
-	<Root Name="EasyTCP" Version="4.0">
+
+	<Root Name="EasyTCP" Version="5.0">
+		<Field Name="DataTypes" Type="DataType" TagName="DataType" Multiple="Yes" />
+		
 		<Node Name="Stream">
 			<Attribute Name="Version" Type="string" />
 			<Attribute Name="ClassName" Type="string" />
 
-			<Node Name="Packet" Multiple="Yes">
+			<Node Name="Packet" Inherit="Base" Multiple="Yes">
 				<Attribute Name="Code" Type="int" />
-				<Attribute Name="Name" Type="string" Desc="Used for method, event and delegate names (Must be unique)" />
-				<Attribute Name="Desc" Type="string" Default="null" />
-
-				<Node Name="Data" Multiple="Yes">
-					<Attribute Name="Name" Type="string" />
-					<Attribute Name="Type" Type="string" />
-					<Attribute Name="Desc" Type="string" Default="null" />
-					<Attribute Name="isList" Type="yn" Default="false" />
-				</Node>
-			</Node>
-		</Node>
-
-		<Node Name="DataTypes" TagName="DataType" TypeName="DataType" Multiple="Yes">
-			<Attribute Name="Name" Type="string" />
-			<Attribute Name="Partial" Type="yn" Default="false" />
-			<Attribute Name="isClass" Type="yn" Default="false" Desc="By default datatype is struct" />
-
-			<Node Name="Fields" TagName="Field" TypeName="Field" Multiple="Yes">
-				<Attribute Name="Name" Type="string" />
-				<Attribute Name="Type" Type="string" />
-				<Attribute Name="isList" Type="yn" Default="false" />
+				<Field Name="Data" Type="Field" Multiple="Yes" />
 			</Node>
 		</Node>
 	</Root>
+
+	<DataType Name="Base">
+		<Attribute Name="Name" Type="string" />
+		<Attribute Name="Desc" Type="string" Default="null" />
+	</DataType>
+
+	<DataType Name="Field" Inherit="Base" Partial="Yes">
+		<Attribute Name="Type" Type="string" />
+		<Attribute Name="isList" Type="yn" Default="false" />
+	</DataType>
+
+	<DataType Name="DataType" Inherit="Base" Partial="Yes">
+		<Attribute Name="Partial" Type="yn" Default="false" />
+		<Attribute Name="isClass" Type="yn" Default="false" Desc="By default datatype is struct" />
+		<Field Name="Fields" Type="Field" TagName="Field" Multiple="Yes" />
+	</DataType>
 </EasyConfig>

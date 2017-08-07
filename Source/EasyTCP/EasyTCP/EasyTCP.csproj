@@ -44,6 +44,8 @@
     <Compile Include="Classes\IndentedStreamWriter.cs" />
     <Compile Include="Classes\Parameters\FlagParameter.cs" />
     <Compile Include="Classes\Parameters\OneStringParameter.cs" />
+    <Compile Include="Classes\Partial\DataType.cs" />
+    <Compile Include="Classes\Partial\Field.cs" />
     <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,5 +70,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

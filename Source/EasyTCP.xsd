@@ -1,5 +1,5 @@
 <schema
-	version="1.1"
+	version="5.0"
 	xmlns:EasyTCP="EasyTCP"
 	targetNamespace="EasyTCP"
 	elementFormDefault="qualified"
@@ -18,23 +18,16 @@
 							<!-- Packet -->
 							<element name="Packet" minOccurs="0" maxOccurs="unbounded">
 								<complexType>
-									<sequence>
+									<complexContent>
+										<extension base="EasyTCP:Base">
+											<sequence>
+												<element name="Data" type="EasyTCP:Field" minOccurs="0" maxOccurs="unbounded" />
+											</sequence>
 
-										<!-- Data -->
-										<element name="Data" minOccurs="0" maxOccurs="unbounded">
-											<complexType>
-												<attribute name="Name" type="string" use="required" />
-												<attribute name="Type" type="string" use="required" />
-												<attribute name="Desc" type="string" use="optional" />
-												<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
-											</complexType>
-										</element>
-									</sequence>
-
-									<!-- Packet Attributes -->
-									<attribute name="Code" type="int" use="required" />
-									<attribute name="Name" type="string" use="required" />
-									<attribute name="Desc" type="string" use="optional" />
+											<!-- Packet Attributes -->
+											<attribute name="Code" type="int" use="required" />
+										</extension>
+									</complexContent>
 								</complexType>
 							</element>
 						</sequence>
@@ -60,20 +53,31 @@
 		</restriction>
 	</simpleType>
 
-	<complexType name="DataType">
-		<sequence>
-			<element name="Field" minOccurs="0" maxOccurs="unbounded">
-				<complexType>
-					<attribute name="Name" type="string" use="required" />
-					<attribute name="Type" type="string" use="required" />
-					<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
-				</complexType>
-			</element>
-		</sequence>
-
-		<!-- DataType Attributes -->
+	<complexType name="Base">
 		<attribute name="Name" type="string" use="required" />
-		<attribute name="Partial" type="EasyTCP:YesNo" use="optional" />
-		<attribute name="isClass" type="EasyTCP:YesNo" use="optional" />
+		<attribute name="Desc" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="Field">
+		<complexContent>
+			<extension base="EasyTCP:Base">
+				<attribute name="Type" type="string" use="required" />
+				<attribute name="isList" type="EasyTCP:YesNo" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="DataType">
+		<complexContent>
+			<extension base="EasyTCP:Base">
+				<sequence>
+					<element name="Field" type="EasyTCP:Field" minOccurs="0" maxOccurs="unbounded" />
+				</sequence>
+
+				<!-- DataType Attributes -->
+				<attribute name="Partial" type="EasyTCP:YesNo" use="optional" />
+				<attribute name="isClass" type="EasyTCP:YesNo" use="optional" />
+			</extension>
+		</complexContent>
 	</complexType>
 </schema>

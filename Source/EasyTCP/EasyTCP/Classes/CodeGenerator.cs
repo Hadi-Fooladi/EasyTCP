@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EasyTCP
+﻿namespace EasyTCP
 {
 	using Properties;
 
@@ -12,24 +10,6 @@ namespace EasyTCP
 		}
 
 		private readonly bool UseNullPropagation;
-
-		private static readonly Dictionary<string, string> dicRead = new Dictionary<string, string>
-		{
-			["bool"] = "ReadBoolean",
-			["char"] = "ReadChar",
-			["byte"] = "ReadByte",
-			["sbyte"] = "ReadSByte",
-			["short"] = "ReadInt16",
-			["ushort"] = "ReadUInt16",
-			["int"] = "ReadInt32",
-			["uint"] = "ReadUInt32",
-			["long"] = "ReadInt64",
-			["ulong"] = "ReadUInt64",
-			["string"] = "ReadString",
-			["float"] = "ReadSingle",
-			["double"] = "ReadDouble",
-			["decimal"] = "ReadDecimal"
-		};
 
 		public void Generate(IndentedStreamWriter SW)
 		{
@@ -133,16 +113,7 @@ namespace EasyTCP
 						SW.WriteLine("WriteCode({0});", P.Code);
 
 						foreach (var D in P.Data)
-							if (D.isList)
-							{
-								SW.WriteLine();
-								SW.WriteLine("BW.Write((ushort){0}.Count);", D.Name);
-								SW.WriteLine("foreach (var X in {0})", D.Name);
-								SW.Inside(() => SW.WriteLine("BW.Write(X);"));
-								SW.WriteLine();
-							}
-							else
-								SW.WriteLine("BW.Write({0});", D.Name);
+							D.WriteWrite(SW);
 
 						SW.WriteLine("Flush();");
 					});
@@ -185,40 +156,26 @@ namespace EasyTCP
 						foreach (var P in Stream.Packet)
 						{
 							SW.WriteLine();
-							SW.WriteLine("case {0}: // {1}", P.Code, P.Name);
+							SW.WriteLine($"case {P.Code}: // {P.Name}");
 							SW.Block(() =>
 							{
-								var Args = "";
 								foreach (var D in P.Data)
-								{
-									string
-										VarName = "o" + D.Name,
-										Deserializer =
-											dicRead.ContainsKey(D.Type) ?
-												string.Format("BR.{0}();", dicRead[D.Type]) :
-												string.Format("new {0}(BR);", D.Type);
-
-									if (UseNullPropagation || Args.Length > 0)
-										Args += ", ";
-
-									Args += VarName;
-
-									if (D.isList)
-									{
-										SW.WriteLine();
-										var CountVar = D.Name + "Count";
-										SW.WriteLine("var {0} = BR.ReadUInt16();", CountVar);
-										SW.WriteLine("var {0} = new {1}[{2}];", VarName, D.Type, CountVar);
-										SW.WriteLine("for (ushort i = 0; i < {0}; i++)", CountVar);
-										SW.Inside(() => SW.WriteLine("{0}[i] = {1}", VarName, Deserializer));
-										SW.WriteLine();
-									}
-									else
-										SW.WriteLine("var {0} = {1}", VarName, Deserializer);
-								}
+									SW.WriteLine($"{D.Type}{(D.isList ? "[]" : "")} o{D.Name};");
 
 								SW.WriteLine();
+
+								foreach (var D in P.Data)
+									D.WriteRead(SW, "o" + D.Name);
+
+								SW.WriteLine();
+
+								// Firing the event
+								string Args = P.Arguments("o");
+								if (UseNullPropagation && !string.IsNullOrEmpty(Args))
+									Args = ", " + Args;
+
 								SW.WriteLine(UseNullPropagation ? "On{0}?.Invoke(this{1});" : "fire{0}({1});", P.Name, Args);
+
 								SW.WriteLine("break;");
 							});
 						}
@@ -239,72 +196,34 @@ namespace EasyTCP
 
 			// Writing DataTypes
 			foreach (var DT in DataTypes)
-			{
-				SW.WriteLine($"internal{(DT.Partial ? " partial" : "")} {(DT.isClass ? "class" : "struct")} {DT.Name}");
-				SW.Block(() =>
-				{
-					string FieldType(DataType.Field F) => F.isList ? $"IList<{F.Type}>" : F.Type;
-
-					// Declaring Fields
-					foreach (var Field in DT.Fields)
-						SW.WriteLine($"public {FieldType(Field)} {Field.Name};");
-
-					SW.WriteLine();
-					SW.WriteLine($"public {DT.Name}(BinaryReader BR)");
-					SW.Block(() =>
-					{
-						foreach (var Field in DT.Fields)
-						{
-							var Deserializer = dicRead.ContainsKey(Field.Type)
-								? string.Format($"BR.{dicRead[Field.Type]}();")
-								: string.Format($"new {Field.Type}(BR);");
-
-							if (Field.isList)
-							{
-								SW.WriteLine();
-								var CountVar = Field.Name + "Count";
-								SW.WriteLine($"var {CountVar} = BR.ReadUInt16();");
-								SW.WriteLine($"{Field.Name} = new {Field.Type}[{CountVar}];");
-								SW.WriteLine($"for (ushort i = 0; i < {CountVar}; i++)");
-								SW.Inside(() => SW.WriteLine($"{Field.Name}[i] = {Deserializer}"));
-								SW.WriteLine();
-							}
-							else
-								SW.WriteLine($"{Field.Name} = {Deserializer}");
-						}
-					});
-				});
-			}
+				DT.Declare(SW);
 
 			if (DataTypes.Count <= 0) return;
 
 			// Writing Extension Methods
-			SW.WriteLine("internal static class BinaryWriterExt");
+			SW.WriteLine("internal static partial class EasyTCP_Ext");
 			SW.Block(() =>
 			{
 				foreach (var DT in DataTypes)
 				{
+					// Write
 					SW.WriteLine($"public static void Write(this BinaryWriter BW, {DT.Name} Obj)");
 					SW.Block(() =>
 					{
-						foreach (var Field in DT.Fields)
-						{
-							var Name = $"Obj.{Field.Name}";
-							if (Field.isList)
-							{
-								SW.WriteLine();
-								SW.WriteLine($"BW.Write((ushort){Name}.Count);");
-								SW.WriteLine($"foreach (var X in {Name})");
-								SW.Inside(() => SW.WriteLine("BW.Write(X);"));
-								SW.WriteLine();
-							}
-							else
-								SW.WriteLine($"BW.Write({Name});");
-						}
+						foreach (var F in DT.Fields)
+							F.WriteWrite(SW, $"Obj.{F.Name}");
+					});
+
+					// Read
+					SW.WriteLine($"public static void Read(this BinaryReader BR, out {DT.Name} Obj)");
+					SW.Block(() =>
+					{
+						SW.WriteLine($"Obj = new {DT.Name}();");
+						foreach (var F in DT.Fields)
+							F.WriteRead(SW, $"Obj.{F.Name}");
 					});
 				}
 			});
-
 		}
 
 		private static void AddFireMethod(IndentedStreamWriter SW, string Name, string Signature, string Arguments)

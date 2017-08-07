@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="Classes\ByteArray.cs" />
     <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Classes\Ext\EasyTCP_Ext.cs" />
     <Compile Include="Classes\Ext\Misc.cs" />
     <Compile Include="Classes\MyStream.cs" />
     <Compile Include="Windows\ServerWindow.xaml.cs">

@@ -10,10 +10,10 @@ namespace Config
 	internal class EasyTCP
 	{
 		public readonly Version Version;
-		public static readonly Version ExpectedVersion = new Version(4, 0);
+		public static readonly Version ExpectedVersion = new Version(5, 0);
 
-		public readonly StreamData Stream;
 		public readonly List<DataType> DataTypes;
+		public readonly StreamData Stream;
 
 		public EasyTCP(string Filename)
 		{
@@ -27,13 +27,13 @@ namespace Config
 			if (Version.Major != ExpectedVersion.Major || Version.Minor < ExpectedVersion.Minor)
 				throw new Exception("Version Mismatch");
 
-			var StreamNode = Node.SelectSingleNode("*[local-name()='Stream']");
-			if (StreamNode != null)
-				Stream = new StreamData(StreamNode);
-
 			DataTypes = new List<DataType>();
 			foreach (XmlNode X in Node.SelectNodes("*[local-name()='DataType']"))
 				DataTypes.Add(new DataType(X));
+
+			var StreamNode = Node.SelectSingleNode("*[local-name()='Stream']");
+			if (StreamNode != null)
+				Stream = new StreamData(StreamNode);
 		}
 
 		internal class StreamData
@@ -52,83 +52,66 @@ namespace Config
 					Packet.Add(new PacketData(X));
 			}
 
-			internal class PacketData
+			internal class PacketData : Base
 			{
 				public readonly int Code;
+				public readonly List<Field> Data;
 
-				/// <summary>
-				/// Used for method, event and delegate names (Must be unique)
-				/// </summary>
-				public readonly string Name;
-
-				public readonly string Desc;
-				public readonly List<DataData> Data;
-
-				public PacketData(XmlNode Node)
+				public PacketData(XmlNode Node) : base(Node)
 				{
 					Code = Node.iAttr("Code");
-					Name = Node.Attr("Name");
-					Desc = Node.Attr("Desc", null);
 
-					Data = new List<DataData>();
+					Data = new List<Field>();
 					foreach (XmlNode X in Node.SelectNodes("*[local-name()='Data']"))
-						Data.Add(new DataData(X));
-				}
-
-				internal class DataData
-				{
-					public readonly string Name;
-					public readonly string Type;
-					public readonly string Desc;
-					public readonly bool isList;
-
-					public DataData(XmlNode Node)
-					{
-						Name = Node.Attr("Name");
-						Type = Node.Attr("Type");
-						Desc = Node.Attr("Desc", null);
-						isList = Node.ynAttr("isList", false);
-					}
+						Data.Add(new Field(X));
 				}
 			}
 		}
+	}
 
-		internal class DataType
+	internal class Base
+	{
+		public readonly string Name;
+		public readonly string Desc;
+
+		public Base(XmlNode Node)
 		{
-			public readonly string Name;
-			public readonly bool Partial;
+			Name = Node.Attr("Name");
+			Desc = Node.Attr("Desc", null);
+		}
+	}
 
-			/// <summary>
-			/// By default datatype is struct
-			/// </summary>
-			public readonly bool isClass;
+	internal partial class Field : Base
+	{
+		public readonly string Type;
+		public readonly bool isList;
 
-			public readonly List<Field> Fields;
+		public Field(XmlNode Node) : base(Node)
+		{
+			Type = Node.Attr("Type");
+			isList = Node.ynAttr("isList", false);
+		}
+	}
 
-			public DataType(XmlNode Node)
-			{
-				Name = Node.Attr("Name");
-				Partial = Node.ynAttr("Partial", false);
-				isClass = Node.ynAttr("isClass", false);
+	internal partial class DataType : Base
+	{
+		public readonly bool Partial;
 
-				Fields = new List<Field>();
-				foreach (XmlNode X in Node.SelectNodes("*[local-name()='Field']"))
-					Fields.Add(new Field(X));
-			}
+		/// <summary>
+		/// By default datatype is struct
+		/// </summary>
+		public readonly bool isClass;
 
-			internal class Field
-			{
-				public readonly string Name;
-				public readonly string Type;
-				public readonly bool isList;
+		public readonly List<Field> Fields;
 
-				public Field(XmlNode Node)
-				{
-					Name = Node.Attr("Name");
-					Type = Node.Attr("Type");
-					isList = Node.ynAttr("isList", false);
-				}
-			}
+		public DataType(XmlNode Node) : base(Node)
+		{
+			Partial = Node.ynAttr("Partial", false);
+			isClass = Node.ynAttr("isClass", false);
+
+			Fields = new List<Field>();
+			foreach (XmlNode X in Node.SelectNodes("*[local-name()='Field']"))
+				Fields.Add(new Field(X));
 		}
 	}
 }

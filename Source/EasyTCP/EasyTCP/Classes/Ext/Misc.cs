@@ -6,7 +6,7 @@ namespace EasyTCP
 {
 	internal static class Misc
 	{
-		public static string Arguments(this Packet P)
+		public static string Arguments(this Packet P, string Prefix = "")
 		{
 			string S = "";
 			var isFirst = true;
@@ -15,7 +15,7 @@ namespace EasyTCP
 				if (isFirst) isFirst = false;
 				else S += ", ";
 
-				S += D.Name;
+				S += Prefix + D.Name;
 			}
 			return S;
 		}
