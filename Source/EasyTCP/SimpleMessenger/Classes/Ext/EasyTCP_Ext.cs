@@ -39,4 +39,6 @@ internal static partial class EasyTCP_Ext
 
 		return A;
 	}
+
+	public static void Write(this BinaryWriter BW, Enum E) => BW.Write(E.GetHashCode());
 }

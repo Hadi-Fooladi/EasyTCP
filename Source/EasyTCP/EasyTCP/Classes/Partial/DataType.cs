@@ -4,8 +4,10 @@ namespace Config
 {
 	internal partial class DataType
 	{
-		public void Declare(IndentedStreamWriter SW)
+		public void Declare()
 		{
+			var SW = Global.SW;
+
 			SW.WriteLine($"internal{(Partial ? " partial" : "")} {(isClass ? "class" : "struct")} {Name}");
 			SW.Block(() =>
 			{

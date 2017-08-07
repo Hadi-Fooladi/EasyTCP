@@ -1,9 +1,16 @@
 ﻿<EasyTCP
-	Version="5.0"
+	Version="5.1"
 	xmlns="EasyTCP"
 	xsi:schemaLocation="EasyTCP ../../EasyTCP.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+	<Enum Name="eBlood" Desc="Blood Types">
+		<Member Name="A" />
+		<Member Name="B" />
+		<Member Name="O" />
+		<Member Name="AB" />
+	</Enum>
+	
 	<Stream ClassName="SampleStream" Version="1.0">
 		<Packet Code="0" Name="Grades" Desc="Sending Grades">
 			<Data Name="Name" Type="string" />
@@ -47,6 +54,12 @@
 		<Packet Code="8" Name="Numbers2">
 			<Data Name="AA" Type="IntArray" isList="Yes" />
 		</Packet>
+
+		<Packet Code="9" Name="Person">
+			<Data Name="Blood" Type="eBlood" />
+			<Data Name="Gender" Type="eGender" />
+			<Data Name="ChildrenBlood" Type="eBlood" isList="Yes" />
+		</Packet>
 	</Stream>
 	
 	<DataType Name="Vector2">
@@ -62,4 +75,9 @@
 	<DataType Name="IntArray" Partial="Yes">
 		<Field Name="Numbers" Type="int" isList="Yes" />
 	</DataType>
+
+	<Enum Name="eGender">
+		<Member Name="Male" Value="1" Desc="Man" />
+		<Member Name="Female" Value="2" Desc="Woman" />
+	</Enum>
 </EasyTCP>

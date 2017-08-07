@@ -11,8 +11,10 @@
 
 		private readonly bool UseNullPropagation;
 
-		public void Generate(IndentedStreamWriter SW)
+		public void Generate()
 		{
+			var SW = Global.SW;
+
 			// Writing Stream Class
 			SW.WriteLine("internal class {0}", Stream.ClassName);
 			SW.Block(() =>
@@ -84,9 +86,9 @@
 					SW.WriteLine();
 					
 					// Firing Methods
-					AddFireMethod(SW, "Closed", "", "");
+					AddFireMethod("Closed", "", "");
 					foreach (var P in Stream.Packet)
-						AddFireMethod(SW, P);
+						AddFireMethod(P);
 				}
 
 				SW.WriteLine("#endregion");
@@ -100,8 +102,7 @@
 				#region Send Methods
 				foreach (var P in Stream.Packet)
 				{
-					// Desc
-					SW.WriteDesc(P.Desc);
+					P.WriteDesc();
 					foreach (var D in P.Data)
 						SW.WriteParameterDesc(D.Name, D.Desc);
 
@@ -113,7 +114,7 @@
 						SW.WriteLine("WriteCode({0});", P.Code);
 
 						foreach (var D in P.Data)
-							D.WriteWrite(SW);
+							D.WriteWrite();
 
 						SW.WriteLine("Flush();");
 					});
@@ -165,7 +166,7 @@
 								SW.WriteLine();
 
 								foreach (var D in P.Data)
-									D.WriteRead(SW, "o" + D.Name);
+									D.WriteRead("o" + D.Name);
 
 								SW.WriteLine();
 
@@ -194,16 +195,21 @@
 				#endregion
 			});
 
-			// Writing DataTypes
-			foreach (var DT in DataTypes)
-				DT.Declare(SW);
+			// Declaring Enums & DataTypes
+			foreach (var Enum in Enums) Enum.Declare();
+			foreach (var DT in DataTypes) DT.Declare();
 
-			if (DataTypes.Count <= 0) return;
+			if (DataTypes.Count <= 0 && Enums.Count <= 0) return;
 
 			// Writing Extension Methods
 			SW.WriteLine("internal static partial class EasyTCP_Ext");
 			SW.Block(() =>
 			{
+				foreach (var Enum in Enums)
+					SW.WriteLine($"public static void Read(this BinaryReader BR, out {Enum.Name} Value) {{ Value = ({Enum.Name})BR.ReadInt32(); }}");
+
+				SW.WriteLine();
+
 				foreach (var DT in DataTypes)
 				{
 					// Write
@@ -211,7 +217,7 @@
 					SW.Block(() =>
 					{
 						foreach (var F in DT.Fields)
-							F.WriteWrite(SW, $"Obj.{F.Name}");
+							F.WriteWrite($"Obj.{F.Name}");
 					});
 
 					// Read
@@ -220,19 +226,17 @@
 					{
 						SW.WriteLine($"Obj = new {DT.Name}();");
 						foreach (var F in DT.Fields)
-							F.WriteRead(SW, $"Obj.{F.Name}");
+							F.WriteRead($"Obj.{F.Name}");
 					});
 				}
 			});
 		}
 
-		private static void AddFireMethod(IndentedStreamWriter SW, string Name, string Signature, string Arguments)
-			=> SW.WriteLine(
+		private static void AddFireMethod(string Name, string Signature, string Arguments)
+			=> Global.SW.WriteLine(
 				"protected void fire{0}({1}) {{ if (On{0} != null) On{0}(this{3}{2}); }}",
 				Name, Signature, Arguments, string.IsNullOrEmpty(Arguments) ? "" : ", ");
 
-		private static void AddFireMethod(IndentedStreamWriter SW, StreamData.PacketData P)
-			=> AddFireMethod(SW, P.Name, P.EventSignature(), P.Arguments());
-
+		private static void AddFireMethod(StreamData.PacketData P) => AddFireMethod(P.Name, P.EventSignature(), P.Arguments());
 	}
 }

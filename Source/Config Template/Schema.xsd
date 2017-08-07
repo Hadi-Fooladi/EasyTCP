@@ -8,8 +8,10 @@
 	<element name="EasyConfig">
 		<complexType>
 			<sequence>
+				<element name="Enum" type="ec:Enum" minOccurs="0" maxOccurs="unbounded" />
 				<element name="DataType" type="ec:DataType" minOccurs="0" maxOccurs="unbounded" />
 				<element name="Root" type="ec:Root" />
+				<element name="Enum" type="ec:Enum" minOccurs="0" maxOccurs="unbounded" />
 				<element name="DataType" type="ec:DataType" minOccurs="0" maxOccurs="unbounded" />
 			</sequence>
 			<attribute name="Version" type="string" use="required" />
@@ -30,31 +32,66 @@
 		</restriction>
 	</simpleType>
 
-	<complexType name="Attribute">
+	<complexType name="Base">
+		<sequence minOccurs="0" maxOccurs="1">
+			<element name="Desc">
+				<complexType>
+					<sequence minOccurs="0" maxOccurs="unbounded">
+						<element name="Line">
+							<complexType>
+								<attribute name="Value" type="string" use="required" />
+							</complexType>
+						</element>
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+
+		<!-- Base Attributes -->
 		<attribute name="Name" type="string" use="required" />
-		<attribute name="Type" type="string" use="required" />
 		<attribute name="Desc" type="string" use="optional" />
-		<attribute name="Default" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="VarBase">
+		<complexContent>
+			<extension base="ec:Base">
+				<attribute name="Type" type="string" use="required" />
+				<attribute name="ReadOnly" type="ec:YesNo" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="Attribute">
+		<complexContent>
+			<extension base="ec:VarBase">
+				<attribute name="Default" type="string" use="optional" />
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="Field">
-		<attribute name="Name" type="string" use="required" />
-		<attribute name="Type" type="string" use="required" />
-		<attribute name="Desc" type="string" use="optional" />
-		<attribute name="TagName" type="string" use="optional" />
-		<attribute name="Multiple" type="ec:YesNo" use="optional" />
+		<complexContent>
+			<extension base="ec:VarBase">
+				<attribute name="TagName" type="string" use="optional" />
+				<attribute name="Multiple" type="ec:YesNo" use="optional" />
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="DataType">
-		<choice minOccurs="0" maxOccurs="unbounded">
-			<element name="Field" type="ec:Field" />
-			<element name="Attribute" type="ec:Attribute" />
-		</choice>
-		<attribute name="Name" type="string" use="required" />
-		<attribute name="Desc" type="string" use="optional" />
-		<attribute name="Inherit" type="string" use="optional" />
-		<attribute name="Partial" type="ec:YesNo" use="optional" />
-		<attribute name="Access" type="ec:AccessModifier" use="optional" />
+		<complexContent>
+			<extension base="ec:Base">
+				<choice minOccurs="0" maxOccurs="unbounded">
+					<element name="Field" type="ec:Field" />
+					<element name="Attribute" type="ec:Attribute" />
+				</choice>
+
+				<!-- DataType Attributes -->
+				<attribute name="Inherit" type="string" use="optional" />
+				<attribute name="Partial" type="ec:YesNo" use="optional" />
+				<attribute name="Access" type="ec:AccessModifier" use="optional" />
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="Node">
@@ -64,6 +101,9 @@
 					<element name="Node" type="ec:Node" />
 					<element name="DataType" type="ec:DataType" />
 				</choice>
+
+				<!-- Node Attributes -->
+				<attribute name="ReadOnly" type="ec:YesNo" use="optional" />
 				<attribute name="Multiple" type="ec:YesNo" use="optional" />
 				<attribute name="TagName" type="string" use="optional" />
 				<attribute name="TypeName" type="string" use="optional" />
@@ -75,6 +115,27 @@
 		<complexContent>
 			<extension base="ec:Node">
 				<attribute name="Version" type="string" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="Enum">
+		<complexContent>
+			<extension base="ec:Base">
+				<sequence>
+					<element name="Member" type="ec:EnumMember" minOccurs="0" maxOccurs="unbounded" />
+				</sequence>
+
+				<!-- Enum Attributes -->
+				<attribute name="Members" type="string" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="EnumMember">
+		<complexContent>
+			<extension base="ec:Base">
+				<attribute name="Value" type="string" use="optional" />
 			</extension>
 		</complexContent>
 	</complexType>

@@ -41,10 +41,14 @@
     <Compile Include="Classes\EasyTCP.cs" />
     <Compile Include="Classes\Ext\Misc.cs" />
     <Compile Include="Classes\Ext\XML.cs" />
+    <Compile Include="Classes\Global.cs" />
     <Compile Include="Classes\IndentedStreamWriter.cs" />
     <Compile Include="Classes\Parameters\FlagParameter.cs" />
     <Compile Include="Classes\Parameters\OneStringParameter.cs" />
+    <Compile Include="Classes\Partial\Base.cs" />
     <Compile Include="Classes\Partial\DataType.cs" />
+    <Compile Include="Classes\Partial\Enum.cs" />
+    <Compile Include="Classes\Partial\EnumMember.cs" />
     <Compile Include="Classes\Partial\Field.cs" />
     <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Program.cs" />

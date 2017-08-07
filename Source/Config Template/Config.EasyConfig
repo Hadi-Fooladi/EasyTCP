@@ -1,10 +1,11 @@
 <EasyConfig
-	Version="4.2"
+	Version="4.7"
 	xmlns="EasyConfig"
 	xsi:schemaLocation="EasyConfig Schema.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<Root Name="EasyTCP" Version="5.0">
+	<Root Name="EasyTCP" Version="5.1">
+		<Field Name="Enums" Type="Enum" TagName="Enum" Multiple="Yes" />
 		<Field Name="DataTypes" Type="DataType" TagName="DataType" Multiple="Yes" />
 		
 		<Node Name="Stream">
@@ -18,7 +19,7 @@
 		</Node>
 	</Root>
 
-	<DataType Name="Base">
+	<DataType Name="Base" Partial="Yes">
 		<Attribute Name="Name" Type="string" />
 		<Attribute Name="Desc" Type="string" Default="null" />
 	</DataType>
@@ -32,5 +33,13 @@
 		<Attribute Name="Partial" Type="yn" Default="false" />
 		<Attribute Name="isClass" Type="yn" Default="false" Desc="By default datatype is struct" />
 		<Field Name="Fields" Type="Field" TagName="Field" Multiple="Yes" />
+	</DataType>
+
+	<DataType Name="Enum" Inherit="Base" Partial="Yes">
+		<Field Name="Members" Type="EnumMember" TagName="Member" Multiple="Yes" />
+	</DataType>
+
+	<DataType Name="EnumMember" Inherit="Base" Partial="Yes">
+		<Attribute Name="Value" Type="int?" Default="null" />
 	</DataType>
 </EasyConfig>

@@ -1,5 +1,5 @@
 <schema
-	version="5.0"
+	version="5.1"
 	xmlns:EasyTCP="EasyTCP"
 	targetNamespace="EasyTCP"
 	elementFormDefault="qualified"
@@ -8,7 +8,10 @@
 	<element name="EasyTCP">
 		<complexType>
 			<sequence>
-				<element name="DataType" type="EasyTCP:DataType" minOccurs="0" maxOccurs="unbounded" />
+				<choice minOccurs="0" maxOccurs="unbounded">
+					<element name="Enum" type="EasyTCP:Enum" />
+					<element name="DataType" type="EasyTCP:DataType" />
+				</choice>
 
 				<!-- Stream -->
 				<element name="Stream">
@@ -38,7 +41,10 @@
 					</complexType>
 				</element>
 
-				<element name="DataType" type="EasyTCP:DataType" minOccurs="0" maxOccurs="unbounded" />
+				<choice minOccurs="0" maxOccurs="unbounded">
+					<element name="Enum" type="EasyTCP:Enum" />
+					<element name="DataType" type="EasyTCP:DataType" />
+				</choice>
 			</sequence>
 
 			<!-- EasyTCP Attributes -->
@@ -77,6 +83,24 @@
 				<!-- DataType Attributes -->
 				<attribute name="Partial" type="EasyTCP:YesNo" use="optional" />
 				<attribute name="isClass" type="EasyTCP:YesNo" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="Enum">
+		<complexContent>
+			<extension base="EasyTCP:Base">
+				<sequence>
+					<element name="Member" type="EasyTCP:EnumMember" minOccurs="0" maxOccurs="unbounded" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="EnumMember">
+		<complexContent>
+			<extension base="EasyTCP:Base">
+				<attribute name="Value" type="string" use="optional" />
 			</extension>
 		</complexContent>
 	</complexType>
