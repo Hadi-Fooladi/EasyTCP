@@ -91,5 +91,16 @@ namespace EasyTCP
 					else WriteLine(S);
 			}
 		}
+
+		public void Region(string Name, Action A)
+		{
+			WriteLine();
+			WriteLine($"#region {Name}");
+			OpenBrace = true;
+			A();
+			BlankLine = false;
+			WriteLine("#endregion");
+			WriteLine();
+		}
 	}
 }

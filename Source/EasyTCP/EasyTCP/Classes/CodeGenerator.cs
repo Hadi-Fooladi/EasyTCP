@@ -33,93 +33,89 @@
 					SW.WriteLine();
 					SW.WriteLine("T = new Thread(ReceiveData);");
 				});
-				SW.WriteLine();
 				#endregion
 
 				#region Fields Declaration
-				SW.WriteLine("#region Fields");
-				SW.WriteDesc("Amount of sleep time if no data exist (in millisecond)");
-				SW.WriteLine("public int Sleep4Data = 100;");
-				SW.WriteLine();
+				SW.Region("Fields", () =>
+				{
+					SW.WriteDesc("Amount of sleep time if no data exist (in millisecond)");
+					SW.WriteLine("public int Sleep4Data = 100;");
+					SW.WriteLine();
 
-				SW.WriteLine("private BinaryReader BR;");
-				SW.WriteLine("private TcpClient Client;");
-				SW.WriteLine("private NetworkStream NS;");
-				SW.WriteLine();
+					SW.WriteLine("private BinaryReader BR;");
+					SW.WriteLine("private TcpClient Client;");
+					SW.WriteLine("private NetworkStream NS;");
+					SW.WriteLine();
 
-				SW.WriteLine("private readonly byte[] B;");
-				SW.WriteLine("private readonly MemoryStream MS;");
-				SW.WriteLine("private readonly BinaryWriter BW;");
-				SW.WriteLine();
+					SW.WriteLine("private readonly byte[] B;");
+					SW.WriteLine("private readonly MemoryStream MS;");
+					SW.WriteLine("private readonly BinaryWriter BW;");
+					SW.WriteLine();
 
-				SW.WriteLine("private readonly Thread T;");
-				SW.WriteLine("private bool Closing, Running = true;");
-				SW.WriteLine("#endregion");
-				SW.WriteLine();
+					SW.WriteLine("private readonly Thread T;");
+					SW.WriteLine("private bool Closing, Running = true;");
+				});
 				#endregion
 
 				#region Delegates
-				SW.WriteLine("#region Delegates");
-				SW.WriteLine("public delegate void dlg({0} Sender);", Stream.ClassName);
-				foreach (var P in Stream.Packet)
+				SW.Region("Delegates", () =>
 				{
-					string S = P.EventSignature();
-					if (S != "") S = ", " + S;
+					SW.WriteLine("public delegate void dlg({0} Sender);", Stream.ClassName);
+					foreach (var P in Stream.Packet)
+					{
+						string S = P.EventSignature();
+						if (S != "") S = ", " + S;
 
-					SW.WriteLine("public delegate void dlg{0}({1} Sender{2});", P.Name, Stream.ClassName, S);
-				}
-
-				SW.WriteLine("#endregion");
-				SW.WriteLine();
+						SW.WriteLine("public delegate void dlg{0}({1} Sender{2});", P.Name, Stream.ClassName, S);
+					}
+				});
 				#endregion
 
 				#region Events
-				SW.WriteLine("#region Events");
-
-				// Events
-				SW.WriteLine("public event dlg OnClosed;");
-				foreach (var P in Stream.Packet)
-					SW.WriteLine("public event dlg{0} On{0};", P.Name);
-
-				if (!UseNullPropagation)
+				SW.Region("Events", () =>
 				{
-					SW.WriteLine();
-					
-					// Firing Methods
-					AddFireMethod("Closed", "", "");
+					SW.WriteLine("public event dlg OnClosed;");
 					foreach (var P in Stream.Packet)
-						AddFireMethod(P);
-				}
+						SW.WriteLine("public event dlg{0} On{0};", P.Name);
 
-				SW.WriteLine("#endregion");
-				SW.WriteLine();
+					if (!UseNullPropagation)
+					{
+						SW.WriteLine();
+
+						// Firing Methods
+						AddFireMethod("Closed", "", "");
+						foreach (var P in Stream.Packet)
+							AddFireMethod(P);
+					}
+				});
 				#endregion
 
-				// Basic Methods
-				SW.WriteBulk(Resources.Methods);
-				SW.WriteLine();
+				SW.Region("Essential Methods", () => SW.WriteBulk(Resources.Methods));
 
 				#region Send Methods
-				foreach (var P in Stream.Packet)
+				SW.Region("Send Methods", () =>
 				{
-					P.WriteDesc();
-					foreach (var D in P.Data)
-						SW.WriteParameterDesc(D.Name, D.Desc);
-
-					SW.WriteLine("public void Send{0}({1})", P.Name, P.SendSignature());
-					SW.Block(() =>
+					foreach (var P in Stream.Packet)
 					{
-						SW.WriteLine("if (Closing) return;");
-						SW.WriteLine();
-						SW.WriteLine("WriteCode({0});", P.Code);
-
+						P.WriteDesc();
 						foreach (var D in P.Data)
-							D.WriteWrite();
+							SW.WriteParameterDesc(D.Name, D.Desc);
 
-						SW.WriteLine("Flush();");
-					});
-					SW.WriteLine();
-				}
+						SW.WriteLine("public void Send{0}({1})", P.Name, P.SendSignature());
+						SW.Block(() =>
+						{
+							SW.WriteLine("if (Closing) return;");
+							SW.WriteLine();
+							SW.WriteLine("WriteCode({0});", P.Code);
+
+							foreach (var D in P.Data)
+								D.WriteWrite();
+
+							SW.WriteLine("Flush();");
+						});
+						SW.WriteLine();
+					}
+				});
 				#endregion
 
 				#region ReceiveData
