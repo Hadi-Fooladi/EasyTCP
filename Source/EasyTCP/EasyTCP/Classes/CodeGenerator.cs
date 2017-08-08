@@ -31,15 +31,15 @@
 					SW.WriteLine("MS = new MemoryStream(B);");
 					SW.WriteLine("BW = new BinaryWriter(MS, Encoding.Unicode);");
 					SW.WriteLine();
-					SW.WriteLine("T = new Thread(ReceiveData);");
+					SW.WriteLine("T = new Thread(ReceiveData) { IsBackground = true };");
 				});
 				#endregion
 
 				#region Fields Declaration
 				SW.Region("Fields", () =>
 				{
-					SW.WriteDesc("Amount of sleep time if no data exist (in millisecond)");
-					SW.WriteLine("public int Sleep4Data = 100;");
+					SW.WriteLine("[Obsolete]");
+					SW.WriteLine("public int Sleep4Data;");
 					SW.WriteLine();
 
 					SW.WriteLine("private BinaryReader BR;");
@@ -52,8 +52,8 @@
 					SW.WriteLine("private readonly BinaryWriter BW;");
 					SW.WriteLine();
 
+					SW.WriteLine("private bool Closing;");
 					SW.WriteLine("private readonly Thread T;");
-					SW.WriteLine("private bool Closing, Running = true;");
 				});
 				#endregion
 
@@ -122,17 +122,9 @@
 				SW.WriteLine("private void ReceiveData()");
 				SW.Block(() =>
 				{
-					SW.WriteLine("while (Running)");
+					SW.WriteLine("for (;;)");
 					SW.Block(() =>
 					{
-						SW.WriteLine("if (Client.Available <= 0)");
-						SW.Block(() =>
-						{
-							SW.WriteLine("Thread.Sleep(Sleep4Data);");
-							SW.WriteLine("continue;");
-						});
-						SW.WriteLine();
-
 						SW.WriteLine("ushort Code = BR.ReadUInt16();");
 						SW.WriteLine("int Len = BR.ReadInt32();");
 						SW.WriteLine();

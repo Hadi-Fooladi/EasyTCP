@@ -38,20 +38,19 @@ namespace SimpleMessenger
 			}
 
 			foreach (var MS in Dic.Keys)
-			{
 				MS.Wait4Close();
-				MS.ForceClose();
-			}
 		}
 
 		private const int PORT = 4987;
 
 		private readonly TcpListener Listener;
 
+		private void Invoke(Action A) => Dispatcher.BeginInvoke(A);
+
 		private void SendMessage(MyStream Exclude, string Msg)
 		{
 			Do4All(MS => MS.SendMessage(Msg), Exclude);
-			Dispatcher.Invoke(() => TB.Inlines.Add(Msg + Environment.NewLine));
+			Invoke(() => TB.Inlines.Add(Msg + Environment.NewLine));
 		}
 
 		private void Do4All(Action<MyStream> Act, MyStream Exclude = null)
@@ -90,7 +89,7 @@ namespace SimpleMessenger
 		private void MyStream_OnClosed(MyStream Sender)
 		{
 			SendMessage(Sender, Dic[Sender] + " left");
-			Dic.TryRemove(Sender, out var x);
+			Dic.TryRemove(Sender, out var _);
 		}
 
 		private void MyStream_OnInfo(MyStream Sender, string Name) => SendMessage(Sender, (Dic[Sender] = Name) + " joined");

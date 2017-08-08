@@ -32,9 +32,11 @@ namespace SimpleMessenger
 
 		private const int PORT = 4987;
 
+		private void Invoke(Action A) => Dispatcher.BeginInvoke(A);
+
 		#region Event Handlers
-		private void MyStream_OnClosed(MyStream Sender) => Dispatcher.Invoke(Close);
-		private void MyStream_OnMessage(MyStream Sender, string Message) => Dispatcher.Invoke(() => TB.Inlines.Add(Message + Environment.NewLine));
+		private void MyStream_OnClosed(MyStream Sender) => Invoke(Close);
+		private void MyStream_OnMessage(MyStream Sender, string Message) => Invoke(() => TB.Inlines.Add(Message + Environment.NewLine));
 
 		private void bSend_OnClick(object sender, RoutedEventArgs e)
 		{
@@ -69,7 +71,7 @@ namespace SimpleMessenger
 
 		private void MyStream_OnPicture(MyStream Sender, ByteArray Data)
 		{
-			Dispatcher.Invoke(() =>
+			Invoke(() =>
 			{
 				using (var Mem = new MemoryStream(Data.B, false))
 				{

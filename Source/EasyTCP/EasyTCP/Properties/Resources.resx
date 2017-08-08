@@ -150,7 +150,8 @@ public void SendCloseRequest()
 
 public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
 
-public void ForceClose() { Running = false; T.Join(); }
+[Obsolete]
+public void ForceClose() { }
 
 private void WriteCode(ushort Code)
 {

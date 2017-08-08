@@ -1,5 +1,5 @@
 ﻿<EasyTCP
-	Version="5.0"
+	Version="5.1"
 	xmlns="EasyTCP"
 	xsi:schemaLocation="EasyTCP ../../../EasyTCP.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
