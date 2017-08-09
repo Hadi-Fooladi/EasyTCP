@@ -1,5 +1,5 @@
 ﻿<EasyTCP
-	Version="5.1"
+	Version="5.2"
 	xmlns="EasyTCP"
 	xsi:schemaLocation="EasyTCP ../../EasyTCP.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -21,7 +21,6 @@
 			<Data Name="Code" Type="string" Desc="SSN" />
 			<Data Name="Married" Type="bool" />
 			<Data Name="Age" Type="int" />
-			<Data Name="Car" Type="Car" />
 		</Packet>
 
 		<Packet Code="2" Name="Status2">
@@ -33,7 +32,6 @@
 		<Packet Code="3" Name="Lists">
 			<Data Name="Animals" Type="string" isList="Yes" />
 			<Data Name="Numbers" Type="float" isList="Yes" />
-			<Data Name="Positions" Type="Vector" isList="Yes" />
 		</Packet>
 
 		<Packet Code="4" Name="Signal" Desc="No Data" />
@@ -76,7 +74,7 @@
 		<Field Name="Numbers" Type="int" isList="Yes" />
 	</DataType>
 
-	<Enum Name="eGender">
+	<Enum Name="eGender" Flags="Yes">
 		<Member Name="Male" Value="1" Desc="Man" />
 		<Member Name="Female" Value="2" Desc="Woman" />
 	</Enum>

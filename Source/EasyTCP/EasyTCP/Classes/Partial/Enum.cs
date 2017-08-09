@@ -9,6 +9,7 @@ namespace Config
 			WriteDesc();
 
 			var SW = Global.SW;
+			if (Flags) SW.WriteLine("[Flags]");
 			SW.WriteLine($"internal enum {Name}");
 
 			SW.Block(() =>

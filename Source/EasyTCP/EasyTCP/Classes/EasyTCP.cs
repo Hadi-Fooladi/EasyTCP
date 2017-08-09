@@ -10,7 +10,7 @@ namespace Config
 	internal class EasyTCP
 	{
 		public readonly Version Version;
-		public static readonly Version ExpectedVersion = new Version(5, 1);
+		public static readonly Version ExpectedVersion = new Version(5, 2);
 
 		public readonly List<Enum> Enums;
 		public readonly List<DataType> DataTypes;
@@ -122,10 +122,13 @@ namespace Config
 
 	internal partial class Enum : Base
 	{
+		public readonly bool Flags;
 		public readonly List<EnumMember> Members;
 
 		public Enum(XmlNode Node) : base(Node)
 		{
+			Flags = Node.ynAttr("Flags", false);
+
 			Members = new List<EnumMember>();
 			foreach (XmlNode X in Node.SelectNodes("*[local-name()='Member']"))
 				Members.Add(new EnumMember(X));

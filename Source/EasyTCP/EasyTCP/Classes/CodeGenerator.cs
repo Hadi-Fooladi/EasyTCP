@@ -194,12 +194,17 @@
 			SW.Block(() =>
 			{
 				foreach (var Enum in Enums)
+				{
+					SW.WriteLine($"// {Enum.Name}");
+					SW.WriteLine($"public static void Write(this BinaryWriter BW, {Enum.Name} Value) {{ BW.Write((Enum)Value); }}");
 					SW.WriteLine($"public static void Read(this BinaryReader BR, out {Enum.Name} Value) {{ Value = ({Enum.Name})BR.ReadInt32(); }}");
-
-				SW.WriteLine();
+					SW.WriteLine();
+				}
 
 				foreach (var DT in DataTypes)
 				{
+					SW.WriteLine($"// {DT.Name}");
+					
 					// Write
 					SW.WriteLine($"public static void Write(this BinaryWriter BW, {DT.Name} Obj)");
 					SW.Block(() =>

@@ -1,5 +1,5 @@
 <schema
-	version="5.1"
+	version="5.2"
 	xmlns:EasyTCP="EasyTCP"
 	targetNamespace="EasyTCP"
 	elementFormDefault="qualified"
@@ -93,6 +93,9 @@
 				<sequence>
 					<element name="Member" type="EasyTCP:EnumMember" minOccurs="0" maxOccurs="unbounded" />
 				</sequence>
+
+				<!-- Enum Attributes -->
+				<attribute name="Flags" type="EasyTCP:YesNo" use="optional" />
 			</extension>
 		</complexContent>
 	</complexType>
