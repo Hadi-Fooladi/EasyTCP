@@ -117,55 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Methods" xml:space="preserve">
-    <value>public void Connect(TcpClient Client)
-{
-	this.Client = Client;
-	Client.NoDelay = true;
-
-	NS = Client.GetStream();
-	BR = new BinaryReader(NS, Encoding.Unicode);
-	var BW = new BinaryWriter(NS);
-
-	BW.Write(Version.Major);
-	BW.Write(Version.Minor);
-
-	var Major = BR.ReadInt32();
-	BR.ReadInt32(); // Skip Minor
-
-	if (Major != Version.Major)
-		throw new Exception("Version Mismatch");
-
-	T.Start();
-}
-
-public void SendCloseRequest()
-{
-	if (Closing) return;
-
-	Closing = true;
-	WriteCode(0xFFFF);
-	Flush();
-}
-
-public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
-
-[Obsolete]
-public void ForceClose() { }
-
-private void WriteCode(ushort Code)
-{
-	BW.Write(Code);
-	MS.Position += 4;
-}
-
-private void Flush()
-{
-	var Len = (int)(MS.Position - 6);
-	MS.Position = 2;
-	BW.Write(Len);
-	NS.Write(B, 0, Len + 6);
-	MS.Position = 0;
-}</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Essential" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Essential.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

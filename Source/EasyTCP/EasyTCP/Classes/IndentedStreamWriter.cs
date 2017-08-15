@@ -102,5 +102,14 @@ namespace EasyTCP
 			WriteLine("#endregion");
 			WriteLine();
 		}
+
+		public void TryCatch(Action Try, Action Catch)
+		{
+			WriteLine("try");
+			Block(Try);
+			BlankLine = false;
+			WriteLine("catch (Exception E)");
+			Block(Catch);
+		}
 	}
 }

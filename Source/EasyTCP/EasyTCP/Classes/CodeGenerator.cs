@@ -60,7 +60,10 @@
 				#region Delegates
 				SW.Region("Delegates", () =>
 				{
-					SW.WriteLine("public delegate void dlg({0} Sender);", Stream.ClassName);
+					SW.WriteLine($"public delegate void dlg({Stream.ClassName} Sender);");
+					SW.WriteLine($"public delegate void dlgException({Stream.ClassName} Sender, Exception E);");
+					SW.WriteLine();
+
 					foreach (var P in Stream.Packet)
 					{
 						string S = P.EventSignature();
@@ -75,22 +78,29 @@
 				SW.Region("Events", () =>
 				{
 					SW.WriteLine("public event dlg OnClosed;");
+					SW.WriteLine("public event dlgException OnException;");
+
 					foreach (var P in Stream.Packet)
 						SW.WriteLine("public event dlg{0} On{0};", P.Name);
 
-					if (!UseNullPropagation)
+					SW.WriteLine();
+					if (UseNullPropagation)
+						AddFireException();
+					else
 					{
-						SW.WriteLine();
-
 						// Firing Methods
 						AddFireMethod("Closed", "", "");
+						AddFireException();
+
 						foreach (var P in Stream.Packet)
 							AddFireMethod(P);
 					}
+
+					void AddFireException() => AddFireMethod("Exception", "Exception E", "E");
 				});
 				#endregion
 
-				SW.Region("Essential Methods", () => SW.WriteBulk(Resources.Methods));
+				SW.Region("Essential Methods", () => SW.WriteBulk(Resources.Essential));
 
 				#region Send Methods
 				SW.Region("Send Methods", () =>
@@ -122,6 +132,10 @@
 				SW.WriteLine("private void ReceiveData()");
 				SW.Block(() =>
 				{
+					SW.TryCatch(Loop, ()=>SW.WriteLine("fireException(E);"));
+
+					void Loop()
+					{
 					SW.WriteLine("for (;;)");
 					SW.Block(() =>
 					{
@@ -179,6 +193,7 @@
 
 						SW.WriteLine("}");
 					});
+					}
 				});
 				#endregion
 			});
