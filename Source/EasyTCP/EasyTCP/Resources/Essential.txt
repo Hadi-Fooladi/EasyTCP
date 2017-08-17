@@ -57,3 +57,9 @@ private void Flush()
 
 	MS.Position = 0;
 }
+
+private void ExclusiveRun(Action A)
+{
+	try { M.WaitOne(); A(); }
+	finally { M.ReleaseMutex(); }
+}

@@ -54,6 +54,7 @@
 
 					SW.WriteLine("private bool Closing;");
 					SW.WriteLine("private readonly Thread T;");
+					SW.WriteLine("private readonly Mutex M = new Mutex();");
 				});
 				#endregion
 
@@ -123,6 +124,25 @@
 
 							SW.WriteLine("Flush();");
 						});
+						SW.WriteLine();
+					}
+				});
+				#endregion
+
+				#region SyncSend Methods
+				SW.Region("SyncSend Methods", () =>
+				{
+					foreach (var P in Stream.Packet)
+					{
+						P.WriteDesc();
+						foreach (var D in P.Data)
+							SW.WriteParameterDesc(D.Name, D.Desc);
+
+						string
+							Signature = $"public void SyncSend{P.Name}({P.SendSignature()})",
+							Statement = $"ExclusiveRun(() => Send{P.Name}({P.Arguments()}));";
+
+						SW.WriteLine(UseNullPropagation ? $"{Signature} => {Statement}" : $"{Signature} {{ {Statement} }}");
 						SW.WriteLine();
 					}
 				});
