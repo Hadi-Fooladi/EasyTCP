@@ -15,7 +15,7 @@ namespace EasyTCP
 
 				#region Adding Parameters
 				OneStringParameter
-					pNameSpace = new OneStringParameter("ns", "name", "namespace name (Default: no namespace)"),
+					pNameSpace = new OneStringParameter("ns", "name", "namespace name (Default: EasyTCP)"),
 					pOutputPath = new OneStringParameter("o", "path", "Output file (Default: Same name as file with '.cs' extension in the current folder)");
 
 				var pUNP = new FlagParameter("unp", "Use null propagation");
@@ -78,20 +78,13 @@ namespace EasyTCP
 
 					SW.WriteLine("using System;");
 					SW.WriteLine("using System.IO;");
-					SW.WriteLine("using System.Text;");
 					SW.WriteLine("using System.Threading;");
-					SW.WriteLine("using System.Net.Sockets;");
 					SW.WriteLine("using System.Collections.Generic;");
 
 					SW.WriteLine();
 
-					if (pNameSpace.Value == null)
-						CG.Generate();
-					else
-					{
-						SW.WriteLine("namespace {0}", pNameSpace.Value);
-						SW.Block(CG.Generate);
-					}
+					SW.WriteLine($"namespace {pNameSpace.Value ?? "EasyTCP"}");
+					SW.Block(CG.Generate);
 				}
 			}
 			catch (Exception E)

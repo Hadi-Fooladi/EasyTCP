@@ -1,1 +1,1 @@
-..\..\EasyTCP\bin\Debug\EasyTCP -unp -o ..\Classes\MyStream.cs -ns SimpleMessenger MyStream.xml
+..\..\EasyTCP\bin\Debug\EasyTCP -unp -o ..\Classes\MyStream.cs MyStream.xml

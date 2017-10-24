@@ -59,40 +59,5 @@ namespace EasyTCP.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to public void Connect(TcpClient Client)
-        ///{
-        ///	this.Client = Client;
-        ///	Client.NoDelay = true;
-        ///
-        ///	NS = Client.GetStream();
-        ///	BR = new BinaryReader(NS, Encoding.Unicode);
-        ///	var BW = new BinaryWriter(NS);
-        ///
-        ///	BW.Write(Version.Major);
-        ///	BW.Write(Version.Minor);
-        ///
-        ///	var Major = BR.ReadInt32();
-        ///	BR.ReadInt32(); // Skip Minor
-        ///
-        ///	if (Major != Version.Major)
-        ///		throw new Exception(&quot;Version Mismatch&quot;);
-        ///
-        ///	T.Start();
-        ///}
-        ///
-        ///public void SendCloseRequest()
-        ///{
-        ///	if (Closing) return;
-        ///
-        ///	Closing = true;
-        ///	WriteCode(0xFFFF) [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Essential {
-            get {
-                return ResourceManager.GetString("Essential", resourceCulture);
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SimpleMessenger
+namespace EasyTCP
 {
 	internal class ByteArray
 	{

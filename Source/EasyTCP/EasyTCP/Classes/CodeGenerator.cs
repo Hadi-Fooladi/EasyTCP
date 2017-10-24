@@ -1,7 +1,5 @@
 ﻿namespace EasyTCP
 {
-	using Properties;
-
 	internal class CodeGenerator : Config.EasyTCP
 	{
 		public CodeGenerator(string Filename, bool UseNullPropagation) : base(Filename)
@@ -16,55 +14,30 @@
 			var SW = Global.SW;
 
 			// Writing Stream Class
-			SW.WriteLine("internal class {0}", Stream.ClassName);
+			SW.WriteLine("internal class {0} : BaseStream", Stream.ClassName);
 			SW.Block(() =>
 			{
 				// Version Field
-				SW.WriteLine("public static readonly Version Version = new Version(\"{0}\");", Stream.Version);
+				SW.WriteLine("private static readonly Version VERSION = new Version(\"{0}\");", Stream.Version);
 				SW.WriteLine();
 
 				#region Constructor
-				SW.WriteLine($"public {Stream.ClassName}(int WriteBufferLength = 65536)");
+				SW.WriteLine($"public {Stream.ClassName}(int WriteBufferLength = 65536) : base(WriteBufferLength)");
 				SW.Block(() =>
 				{
-					SW.WriteLine("B = new byte[WriteBufferLength];");
-					SW.WriteLine("MS = new MemoryStream(B);");
-					SW.WriteLine("BW = new BinaryWriter(MS, Encoding.Unicode);");
-					SW.WriteLine();
 					SW.WriteLine("T = new Thread(ReceiveData) { IsBackground = true };");
 				});
 				#endregion
 
-				#region Fields Declaration
-				SW.Region("Fields", () =>
+				SW.Region("Overridden", () =>
 				{
-					SW.WriteLine("[Obsolete]");
-					SW.WriteLine("public int Sleep4Data;");
-					SW.WriteLine();
-
-					SW.WriteLine("private BinaryReader BR;");
-					SW.WriteLine("private TcpClient Client;");
-					SW.WriteLine("private NetworkStream NS;");
-					SW.WriteLine();
-
-					SW.WriteLine("private readonly byte[] B;");
-					SW.WriteLine("private readonly MemoryStream MS;");
-					SW.WriteLine("private readonly BinaryWriter BW;");
-					SW.WriteLine();
-
-					SW.WriteLine("private bool Closing;");
-					SW.WriteLine("private readonly Thread T;");
-					SW.WriteLine("private readonly Mutex M = new Mutex();");
+					SW.WriteLine("protected override Thread T { get; }");
+					SW.WriteLine("protected override Version Version { get { return VERSION; } }");
 				});
-				#endregion
 
 				#region Delegates
 				SW.Region("Delegates", () =>
 				{
-					SW.WriteLine($"public delegate void dlg({Stream.ClassName} Sender);");
-					SW.WriteLine($"public delegate void dlgException({Stream.ClassName} Sender, Exception E);");
-					SW.WriteLine();
-
 					foreach (var P in Stream.Packet)
 					{
 						string S = P.EventSignature();
@@ -78,30 +51,16 @@
 				#region Events
 				SW.Region("Events", () =>
 				{
-					SW.WriteLine("public event dlg OnClosed;");
-					SW.WriteLine("public event dlgException OnException;");
-
 					foreach (var P in Stream.Packet)
 						SW.WriteLine("public event dlg{0} On{0};", P.Name);
 
+					if (UseNullPropagation) return;
+
 					SW.WriteLine();
-					if (UseNullPropagation)
-						AddFireException();
-					else
-					{
-						// Firing Methods
-						AddFireMethod("Closed", "", "");
-						AddFireException();
-
-						foreach (var P in Stream.Packet)
-							AddFireMethod(P);
-					}
-
-					void AddFireException() => AddFireMethod("Exception", "Exception E", "E");
+					foreach (var P in Stream.Packet)
+						AddFireMethod(P);
 				});
 				#endregion
-
-				SW.Region("Essential Methods", () => SW.WriteBulk(Resources.Essential));
 
 				#region Send Methods
 				SW.Region("Send Methods", () =>
@@ -172,7 +131,7 @@
 							SW.WriteLine();
 
 							SW.WriteLine("Client.Close();");
-							SW.WriteLine(UseNullPropagation ? "OnClosed?.Invoke(this);" : "fireClosed();");
+							SW.WriteLine("fireClosed();");
 							SW.WriteLine("return; // Exit the thread");
 						});
 
@@ -225,7 +184,7 @@
 			if (DataTypes.Count <= 0 && Enums.Count <= 0) return;
 
 			// Writing Extension Methods
-			SW.WriteLine("internal static partial class EasyTCP_Ext");
+			SW.WriteLine("internal static partial class Ext");
 			SW.Block(() =>
 			{
 				foreach (var Enum in Enums)
@@ -262,7 +221,7 @@
 
 		private static void AddFireMethod(string Name, string Signature, string Arguments)
 			=> Global.SW.WriteLine(
-				"protected void fire{0}({1}) {{ if (On{0} != null) On{0}(this{3}{2}); }}",
+				"private void fire{0}({1}) {{ var _ = On{0}; if (_ != null) _(this{3}{2}); }}",
 				Name, Signature, Arguments, string.IsNullOrEmpty(Arguments) ? "" : ", ");
 
 		private static void AddFireMethod(StreamData.PacketData P) => AddFireMethod(P.Name, P.EventSignature(), P.Arguments());

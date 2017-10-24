@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
+using EasyTCP;
+
 namespace SimpleMessenger
 {
 	internal partial class MainWindow
@@ -35,7 +37,7 @@ namespace SimpleMessenger
 		private void Invoke(Action A) => Dispatcher.BeginInvoke(A);
 
 		#region Event Handlers
-		private void MyStream_OnClosed(MyStream Sender) => Invoke(Close);
+		private void MyStream_OnClosed(BaseStream Sender) => Invoke(Close);
 		private void MyStream_OnMessage(MyStream Sender, string Message) => Invoke(() => TB.Inlines.Add(Message + Environment.NewLine));
 
 		private void bSend_OnClick(object sender, RoutedEventArgs e)

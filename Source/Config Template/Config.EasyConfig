@@ -4,7 +4,7 @@
 	xsi:schemaLocation="EasyConfig Schema.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<Root Name="EasyTCP" Version="5.2">
+	<Root Name="EasyTCP" Version="6.0">
 		<Field Name="Enums" Type="Enum" TagName="Enum" Multiple="Yes" />
 		<Field Name="DataTypes" Type="DataType" TagName="DataType" Multiple="Yes" />
 		

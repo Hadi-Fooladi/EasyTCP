@@ -70,6 +70,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes\BaseStream.cs" />
     <Compile Include="Classes\ByteArray.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Ext\EasyTCP_Ext.cs" />

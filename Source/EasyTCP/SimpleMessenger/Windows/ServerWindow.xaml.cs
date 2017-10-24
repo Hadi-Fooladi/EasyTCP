@@ -6,6 +6,8 @@ using System.Windows.Threading;
 using System.Windows.Documents;
 using System.Collections.Concurrent;
 
+using EasyTCP;
+
 namespace SimpleMessenger
 {
 	internal partial class ServerWindow
@@ -86,10 +88,11 @@ namespace SimpleMessenger
 
 		private void MyStream_OnPicture(MyStream Sender, ByteArray Data) => Do4All(MS => MS.SendPicture(Data), Sender);
 
-		private void MyStream_OnClosed(MyStream Sender)
+		private void MyStream_OnClosed(BaseStream Sender)
 		{
-			SendMessage(Sender, Dic[Sender] + " left");
-			Dic.TryRemove(Sender, out var _);
+			var S = (MyStream)Sender;
+			SendMessage(S, Dic[S] + " left");
+			Dic.TryRemove(S, out var _);
 		}
 
 		private void MyStream_OnInfo(MyStream Sender, string Name) => SendMessage(Sender, (Dic[Sender] = Name) + " joined");
