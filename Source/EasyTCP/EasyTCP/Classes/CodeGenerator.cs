@@ -76,32 +76,18 @@
 						{
 							SW.WriteLine("if (Closing) return;");
 							SW.WriteLine();
-							SW.WriteLine("WriteCode({0});", P.Code);
 
-							foreach (var D in P.Data)
-								D.WriteWrite();
+							SW.WriteLine("lock (WriteLock)");
+							SW.Block(() =>
+							{
+								SW.WriteLine("WriteCode({0});", P.Code);
 
-							SW.WriteLine("Flush();");
+								foreach (var D in P.Data)
+									D.WriteWrite();
+
+								SW.WriteLine("Flush();");
+							});
 						});
-						SW.WriteLine();
-					}
-				});
-				#endregion
-
-				#region SyncSend Methods
-				SW.Region("SyncSend Methods", () =>
-				{
-					foreach (var P in Stream.Packet)
-					{
-						P.WriteDesc();
-						foreach (var D in P.Data)
-							SW.WriteParameterDesc(D.Name, D.Desc);
-
-						string
-							Signature = $"public void SyncSend{P.Name}({P.SendSignature()})",
-							Statement = $"ExclusiveRun(() => Send{P.Name}({P.Arguments()}));";
-
-						SW.WriteLine(UseNullPropagation ? $"{Signature} => {Statement}" : $"{Signature} {{ {Statement} }}");
 						SW.WriteLine();
 					}
 				});

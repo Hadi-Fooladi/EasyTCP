@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Use with 'EasyTCP (v6.0.22)'
+
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -26,6 +28,8 @@ namespace EasyTCP
 
 		protected bool Closing;
 		private readonly Mutex M = new Mutex();
+
+		protected object WriteLock = new object();
 		#endregion
 
 		protected abstract Thread T { get; }
@@ -66,8 +70,12 @@ namespace EasyTCP
 			if (Closing) return;
 
 			Closing = true;
-			WriteCode(0xFFFF);
-			Flush();
+
+			lock (WriteLock)
+			{
+				WriteCode(0xFFFF);
+				Flush();
+			}
 		}
 
 		public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
@@ -95,16 +103,6 @@ namespace EasyTCP
 			}
 
 			MS.Position = 0;
-		}
-
-		protected void ExclusiveRun(Action A)
-		{
-			try
-			{
-				M.WaitOne();
-				A();
-			}
-			finally { M.ReleaseMutex(); }
 		}
 		#endregion
 	}
