@@ -1,4 +1,8 @@
-﻿// Use with 'EasyTCP (v6.0.22)'
+﻿/*
+ * Compatible with the following versions:
+ *    - 6.0.22
+ *    - 6.1.23
+ */
 
 using System;
 using System.IO;

@@ -6,6 +6,8 @@ namespace Config
 	{
 		public void Declare()
 		{
+			if (!Implement) return;
+
 			var SW = Global.SW;
 
 			SW.WriteLine($"internal{(Partial ? " partial" : "")} {(isClass ? "class" : "struct")} {Name}");

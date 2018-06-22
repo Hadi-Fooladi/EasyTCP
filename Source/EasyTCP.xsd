@@ -83,6 +83,7 @@
 				<!-- DataType Attributes -->
 				<attribute name="Partial" type="EasyTCP:YesNo" use="optional" />
 				<attribute name="isClass" type="EasyTCP:YesNo" use="optional" />
+				<attribute name="Implement" type="EasyTCP:YesNo" use="optional" />
 			</extension>
 		</complexContent>
 	</complexType>

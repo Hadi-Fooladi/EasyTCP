@@ -10,7 +10,7 @@ namespace Config
 	internal class EasyTCP
 	{
 		public readonly Version Version;
-		public static readonly Version ExpectedVersion = new Version(6, 0);
+		public static readonly Version ExpectedVersion = new Version(6, 1);
 
 		public readonly List<Enum> Enums;
 		public readonly List<DataType> DataTypes;
@@ -107,12 +107,14 @@ namespace Config
 		/// </summary>
 		public readonly bool isClass;
 
+		public readonly bool Implement;
 		public readonly List<Field> Fields;
 
 		public DataType(XmlNode Node) : base(Node)
 		{
 			Partial = Node.ynAttr("Partial", false);
 			isClass = Node.ynAttr("isClass", false);
+			Implement = Node.ynAttr("Implement", true);
 
 			Fields = new List<Field>();
 			foreach (XmlNode X in Node.SelectNodes("*[local-name()='Field']"))
