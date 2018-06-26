@@ -6,13 +6,11 @@ using System.Windows.Threading;
 using System.Windows.Documents;
 using System.Collections.Concurrent;
 
-using EasyTCP;
-
 namespace SimpleMessenger
 {
 	internal partial class ServerWindow
 	{
-		private readonly ConcurrentDictionary<MyStream, string> Dic = new ConcurrentDictionary<MyStream, string>();
+		private readonly ConcurrentDictionary<EasyTCP.EasyTCP, string> Dic = new ConcurrentDictionary<EasyTCP.EasyTCP, string>();
 
 		public ServerWindow()
 		{
@@ -49,13 +47,13 @@ namespace SimpleMessenger
 
 		private void Invoke(Action A) => Dispatcher.BeginInvoke(A);
 
-		private void SendMessage(MyStream Exclude, string Msg)
+		private void SendMessage(EasyTCP.EasyTCP Exclude, string Msg)
 		{
-			Do4All(MS => MS.SendMessage(Msg), Exclude);
+			Do4All(MS => MS.Send(1, Msg), Exclude);
 			Invoke(() => TB.Inlines.Add(Msg + Environment.NewLine));
 		}
 
-		private void Do4All(Action<MyStream> Act, MyStream Exclude = null)
+		private void Do4All(Action<EasyTCP.EasyTCP> Act, EasyTCP.EasyTCP Exclude = null)
 		{
 			foreach (var MS in Dic.Keys)
 				if (MS != Exclude)
@@ -68,12 +66,11 @@ namespace SimpleMessenger
 			if (Listener.Pending())
 				try
 				{
-					var MyStream = new MyStream(Constants.BufferSize);
-					MyStream.OnInfo += MyStream_OnInfo;
+					var MyStream = new MyEasyTCP(Constants.BufferSize);
+					MyStream.OnData += MyStream_OnInfo;
 					MyStream.OnClosed += MyStream_OnClosed;
-					MyStream.OnMessage += MyStream_OnMessage;
-					MyStream.OnPicture += MyStream_OnPicture;
-					MyStream.Connect(Listener.AcceptTcpClient());
+
+					MyStream.Connect(Listener.AcceptTcpClient(), 1, 0);
 				}
 				catch (Exception E)
 				{
@@ -86,17 +83,26 @@ namespace SimpleMessenger
 				}
 		}
 
-		private void MyStream_OnPicture(MyStream Sender, ByteArray Data) => Do4All(MS => MS.SendPicture(Data), Sender);
+		//private void MyStream_OnPicture(MyStream Sender, ByteArray Data) => Do4All(MS => MS.SendPicture(Data), Sender);
 
-		private void MyStream_OnClosed(BaseStream Sender)
+		private void MyStream_OnClosed(EasyTCP.EasyTCP S)
 		{
-			var S = (MyStream)Sender;
 			SendMessage(S, Dic[S] + " left");
-			Dic.TryRemove(S, out var _);
+			Dic.TryRemove(S, out _);
 		}
 
-		private void MyStream_OnInfo(MyStream Sender, string Name) => SendMessage(Sender, (Dic[Sender] = Name) + " joined");
-		private void MyStream_OnMessage(MyStream Sender, string Message) => SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], Message));
+		private void MyStream_OnInfo(EasyTCP.EasyTCP Sender, ushort Code, object Value)
+		{
+			switch (Code)
+			{
+			case 0:
+				SendMessage(Sender, (Dic[Sender] = Value.ToString()) + " joined");
+				break;
+			case 1:
+				SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], Value));
+				break;
+			}
+		}
 		#endregion
 	}
 }

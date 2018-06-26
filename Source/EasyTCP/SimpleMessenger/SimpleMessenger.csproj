@@ -70,12 +70,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\BaseStream.cs" />
     <Compile Include="Classes\ByteArray.cs" />
     <Compile Include="Classes\Constants.cs" />
-    <Compile Include="Classes\Ext\EasyTCP_Ext.cs" />
     <Compile Include="Classes\Ext\Misc.cs" />
-    <Compile Include="Classes\MyStream.cs" />
+    <Compile Include="Classes\MyEasyTCP.cs" />
     <Compile Include="Windows\ServerWindow.xaml.cs">
       <DependentUpon>ServerWindow.xaml</DependentUpon>
     </Compile>
@@ -112,6 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EasyTCP\EasyTCP.csproj">
+      <Project>{9ea91237-a549-4274-a957-e81bf2af6e31}</Project>
+      <Name>EasyTCP</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
