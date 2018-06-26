@@ -11,15 +11,15 @@ namespace EasyTCP
 		public CompositeTypeIO(Type T)
 		{
 			this.T = T;
-			if (TypeIOs.Compostie[T] != null) return;
+			if (TypeIOs.Composite[T] != null) return;
 
 			TypeIOs.AddComposite(T, this);
 
-			var CT = T.GetInterface(Collection.Type.FullName);
+			var CT = T.GetCollectionInterface();
 			if (CT != null)
 			{
 				isCollection = true;
-				GetOrCreate(ListType = T.GetGenericArguments()[0]);
+				GetOrCreate(ListType = T.GetCollectionElementType());
 				return;
 			}
 
@@ -31,12 +31,18 @@ namespace EasyTCP
 			}
 		}
 
+		#region Fields
 		private static readonly SortedList<int, CField> Fields = new SortedList<int, CField>();
 
-		private readonly Type T, ListType;
-		private readonly bool isCollection;
+		private readonly Type T;
 
+		public readonly Type ListType;
+		public readonly bool isCollection;
+		#endregion
+
+		#region Public Methods
 		public static ITypeIO GetOrCreate(Type T) => TypeIOs.All[T] ?? new CompositeTypeIO(T);
+		#endregion
 
 		#region ITypeIO Members
 		public object Read(BinaryReader BR)
@@ -66,22 +72,20 @@ namespace EasyTCP
 		{
 			if (isCollection)
 			{
+				var C = (ICollection)Value;
 				var IO = TypeIOs.All[ListType];
 
-				var Count = (int)Collection.CountProperty.GetValue(Value);
-				BW.Write(Count);
-
-				foreach (var X in Value as IEnumerable)
+				BW.Write(C.Count);
+				foreach (var X in C)
 					IO.Write(BW, X);
-
-				return;
 			}
-
-			foreach (var F in Fields.Values)
-				F.IO.Write(BW, F.Info.GetValue(Value));
+			else
+				foreach (var F in Fields.Values)
+					F.IO.Write(BW, F.Info.GetValue(Value));
 		}
 		#endregion
 
+		#region Nested Classes
 		private class CField
 		{
 			public readonly ITypeIO IO;
@@ -93,11 +97,6 @@ namespace EasyTCP
 				IO = GetOrCreate(Info.FieldType);
 			}
 		}
-
-		private static class Collection
-		{
-			public static readonly Type Type = typeof(ICollection);
-			public static readonly PropertyInfo CountProperty = Type.GetProperty("Count");
-		}
+		#endregion
 	}
 }

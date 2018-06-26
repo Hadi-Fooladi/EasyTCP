@@ -113,6 +113,10 @@ namespace SimpleMessenger
 			for (i = 0; i < n; i++)
 				L.Add(Rnd.Next(1, 1000));
 
+			//var L = new int[n];
+
+			//for (i = 0; i < n; i++)
+			//	L[i] = Rnd.Next(1, 1000);
 
 			TCP.Send(2, L);
 		}

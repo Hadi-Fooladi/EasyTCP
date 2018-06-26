@@ -16,15 +16,25 @@ namespace EasyTCP
 
 		public static readonly Indexer
 			Primary = new Indexer(PrimaryMap),
-			Compostie = new Indexer(CompositeMap);
+			Composite = new Indexer(CompositeMap);
 
 		public static AllIndexer All = new AllIndexer();
 
 		public static ITypeIO GetIO<T>() => All[typeof(T)];
 		public static ITypeIO GetPrimary<T>() => Primary[typeof(T)];
-		public static ITypeIO GetComposite<T>() => Compostie[typeof(T)];
+		public static ITypeIO GetComposite<T>() => Composite[typeof(T)];
 
 		public static void AddComposite(Type T, ITypeIO IO) => CompositeMap.Add(T, IO);
+
+		public static IEnumerable<CompositeTypeIO> CollectionIOs
+		{
+			get
+			{
+				foreach (CompositeTypeIO IO in CompositeMap.Values)
+					if (IO.isCollection)
+						yield return IO;
+			}
+		}
 
 		public class Indexer
 		{
@@ -37,7 +47,7 @@ namespace EasyTCP
 
 		public class AllIndexer
 		{
-			public ITypeIO this[Type T] => Primary[T] ?? Compostie[T];
+			public ITypeIO this[Type T] => Primary[T] ?? Composite[T];
 		}
 	}
 }

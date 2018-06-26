@@ -32,8 +32,35 @@ namespace EasyTCP
 		{
 			lock (WriteLock)
 			{
+				#region Finding Type IO
+				var T = Value.GetType();
+				var IO = TypeIOs.All[T];
+
+				if (IO == null)
+				{
+					var CI = T.GetCollectionInterface();
+					if (CI == null)
+						throw new Exception("Value data type neither is not a collection or not defined");
+
+					// Finding collection element type
+					//var ET = CI.GetGenericArguments()[0];
+					var ET = T.GetCollectionElementType();
+					foreach (var CIO in TypeIOs.CollectionIOs)
+						if (CIO.ListType == ET)
+						{
+							IO = CIO;
+							break;
+						}
+
+					if (IO == null)
+						throw new Exception("Collection element type is not defined");
+
+					TypeIOs.AddComposite(T, IO);
+				}
+				#endregion
+
 				WriteCode(Code);
-				TypeIOs.All[Value.GetType()].Write(BW, Value);
+				IO.Write(BW, Value);
 				Flush();
 			}
 		}
