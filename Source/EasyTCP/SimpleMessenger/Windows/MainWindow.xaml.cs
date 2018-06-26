@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;
@@ -41,6 +42,9 @@ namespace SimpleMessenger
 				break;
 			case 1:
 				Invoke(() => TB.Inlines.Add(Value + Environment.NewLine));
+				break;
+			case 2:
+				Invoke(() => TB.Inlines.Add(string.Join(" ", Value as IEnumerable<int>) + Environment.NewLine));
 				break;
 			}
 		}
@@ -98,6 +102,20 @@ namespace SimpleMessenger
 		//		}
 		//	});
 		//}
+
+		private static readonly Random Rnd = new Random();
+
+		private void bRandom_OnClick(object sender, RoutedEventArgs e)
+		{
+			int i, n = Rnd.Next(2, 6);
+			var L = new List<int>();
+
+			for (i = 0; i < n; i++)
+				L.Add(Rnd.Next(1, 1000));
+
+
+			TCP.Send(2, L);
+		}
 		#endregion
 	}
 }

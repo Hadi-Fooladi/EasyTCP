@@ -12,7 +12,7 @@ namespace SimpleMessenger
 		{
 			DefinePacket<string>(0); // Name
 			DefinePacket<string>(1); // Message
+			DefinePacket<List<int>>(2); // Random Numbers
 		}
-
 	}
 }

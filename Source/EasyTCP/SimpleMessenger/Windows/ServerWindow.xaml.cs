@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Windows.Documents;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace SimpleMessenger
@@ -100,6 +101,9 @@ namespace SimpleMessenger
 				break;
 			case 1:
 				SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], Value));
+				break;
+			case 2:
+				SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], string.Join(" ", Value as IEnumerable<int>)));
 				break;
 			}
 		}

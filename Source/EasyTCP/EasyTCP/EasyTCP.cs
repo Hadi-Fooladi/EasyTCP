@@ -25,21 +25,15 @@ namespace EasyTCP
 
 		private readonly Dictionary<ushort, Type> Packets = new Dictionary<ushort, Type>();
 
-		public void DefinePacket<PacketType>(ushort Code)
-		{
-			var PT = typeof(PacketType);
-			Packets[Code] = PT;
+		public void DefinePacket<PacketType>(ushort Code) => DefinePacket(Code, typeof(PacketType));
+		public void DefinePacket(ushort Code, Type PacketType) => CompositeTypeIO.GetOrCreate(Packets[Code] = PacketType);
 
-			if (TypeIOs.All[PT] == null)
-				new CompositeTypeIO(PT);
-		}
-
-		public void Send<T>(ushort Code, T Value)
+		public void Send(ushort Code, object Value)
 		{
 			lock (WriteLock)
 			{
 				WriteCode(Code);
-				TypeIOs.GetIO<T>().Write(BW, Value);
+				TypeIOs.All[Value.GetType()].Write(BW, Value);
 				Flush();
 			}
 		}
