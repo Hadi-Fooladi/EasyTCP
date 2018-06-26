@@ -1,1 +1,0 @@
-EasyConfig -NoSave -ns Config -o ..\EasyTCP\EasyTCP\Classes\EasyTCP.cs Config.EasyConfig

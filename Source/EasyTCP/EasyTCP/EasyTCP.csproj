@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9EA91237-A549-4274-A957-E81BF2AF6E31}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>EasyTCP</RootNamespace>
     <AssemblyName>EasyTCP</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -31,41 +31,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\CodeGenerator.cs" />
-    <Compile Include="Classes\EasyTCP.cs" />
-    <Compile Include="Classes\Ext\Misc.cs" />
-    <Compile Include="Classes\Ext\XML.cs" />
-    <Compile Include="Classes\Global.cs" />
-    <Compile Include="Classes\IndentedStreamWriter.cs" />
-    <Compile Include="Classes\Parameters\FlagParameter.cs" />
-    <Compile Include="Classes\Parameters\OneStringParameter.cs" />
-    <Compile Include="Classes\Partial\Base.cs" />
-    <Compile Include="Classes\Partial\DataType.cs" />
-    <Compile Include="Classes\Partial\Enum.cs" />
-    <Compile Include="Classes\Partial\EnumMember.cs" />
-    <Compile Include="Classes\Partial\Field.cs" />
-    <Compile Include="Interfaces\IParameter.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="EasyTCP.cs" />
+    <Compile Include="EasyTCPAttribute.cs" />
+    <Compile Include="TypeIO\TypeIOs.cs" />
+    <Compile Include="TypeIO\CompositeTypeIO.cs" />
+    <Compile Include="TypeIO\ITypeIO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Sample.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Compile Include="TypeIO\Primary TypeIO.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -74,8 +60,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
