@@ -5,19 +5,30 @@ namespace EasyTCP
 {
 	internal static class TypeIOs
 	{
-		private static readonly IReadOnlyDictionary<Type, ITypeIO> Primary = new Dictionary<Type, ITypeIO>
+		private static readonly IReadOnlyDictionary<Type, ITypeIO> PrimaryMap = new Dictionary<Type, ITypeIO>
 		{
 			{ typeof(int), new Int32TypeIO() },
 			{ typeof(float), new SingleTypeIO() },
-			{ typeof(string), new StringTypeIO() }
+			{ typeof(string), new StringTypeIO() },
+			{ typeof(byte), new ByteTypeIO() },
+			{ typeof(char), new CharTypeIO() },
+			{ typeof(bool), new BooleanTypeIO() },
+			{ typeof(short), new Int16TypeIO() },
+			{ typeof(long), new Int64TypeIO() },
+			{ typeof(uint), new UInt32TypeIO() },
+			{ typeof(ushort), new UInt16TypeIO() },
+			{ typeof(ulong), new UInt64TypeIO() },
+			{ typeof(double), new DoubleTypeIO() },
+			{ typeof(decimal), new DecimalTypeIO() },
+			{ typeof(sbyte), new SByteTypeIO() }
 		};
 
 		private static readonly Dictionary<Type, ListIO> ListMap = new Dictionary<Type, ListIO>();
 		private static readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();
 		private static readonly Dictionary<Type, CompositeTypeIO> CompositeMap = new Dictionary<Type, CompositeTypeIO>();
 
-		public static bool Exist(Type T) => Primary.ContainsKey(T) || CompositeMap.ContainsKey(T) || ListMap.ContainsKey(T);
-		public static ITypeIO Get(Type T) => Primary.GetValueOrNull(T) ?? CompositeMap.GetValueOrNull(T) as ITypeIO ?? ListMap.GetValueOrNull(T);
+		public static bool Exist(Type T) => PrimaryMap.ContainsKey(T) || CompositeMap.ContainsKey(T) || ListMap.ContainsKey(T);
+		public static ITypeIO Get(Type T) => PrimaryMap.GetValueOrNull(T) ?? CompositeMap.GetValueOrNull(T) as ITypeIO ?? ListMap.GetValueOrNull(T);
 
 		public static ITypeIO GetOrCreate(Type T) => Get(T) ?? Create(T);
 
