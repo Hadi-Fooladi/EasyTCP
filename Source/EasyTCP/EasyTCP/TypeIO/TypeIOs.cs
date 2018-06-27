@@ -5,49 +5,50 @@ namespace EasyTCP
 {
 	internal static class TypeIOs
 	{
-		private static readonly IReadOnlyDictionary<Type, ITypeIO> PrimaryMap = new Dictionary<Type, ITypeIO>
+		private static readonly IReadOnlyDictionary<Type, ITypeIO> Primary = new Dictionary<Type, ITypeIO>
 		{
 			{ typeof(int), new Int32TypeIO() },
 			{ typeof(float), new SingleTypeIO() },
 			{ typeof(string), new StringTypeIO() }
 		};
 
-		private static readonly Dictionary<Type, ITypeIO> CompositeMap = new Dictionary<Type, ITypeIO>();
+		private static readonly Dictionary<Type, ListIO> ListMap = new Dictionary<Type, ListIO>();
+		private static readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();
+		private static readonly Dictionary<Type, CompositeTypeIO> CompositeMap = new Dictionary<Type, CompositeTypeIO>();
 
-		public static readonly Indexer
-			Primary = new Indexer(PrimaryMap),
-			Composite = new Indexer(CompositeMap);
+		public static bool Exist(Type T) => Primary.ContainsKey(T) || CompositeMap.ContainsKey(T) || ListMap.ContainsKey(T);
+		public static ITypeIO Get(Type T) => Primary.GetValueOrNull(T) ?? CompositeMap.GetValueOrNull(T) as ITypeIO ?? ListMap.GetValueOrNull(T);
 
-		public static AllIndexer All = new AllIndexer();
+		public static ITypeIO GetOrCreate(Type T) => Get(T) ?? Create(T);
 
-		public static ITypeIO GetIO<T>() => All[typeof(T)];
-		public static ITypeIO GetPrimary<T>() => Primary[typeof(T)];
-		public static ITypeIO GetComposite<T>() => Composite[typeof(T)];
-
-		public static void AddComposite(Type T, ITypeIO IO) => CompositeMap.Add(T, IO);
-
-		public static IEnumerable<CompositeTypeIO> CollectionIOs
+		private static ITypeIO Create(Type T)
 		{
-			get
+			if (T.IsCollection())
 			{
-				foreach (CompositeTypeIO IO in CompositeMap.Values)
-					if (IO.isCollection)
-						yield return IO;
+				var ElementType = T.GetCollectionElementType();
+
+				// Check element type exist
+				var IO = ListElementMap.GetValueOrNull(ElementType);
+				if (IO != null)
+					ListMap.Add(T, IO);
+				else
+				{
+					IO = new ListIO(ElementType);
+					ListMap.Add(T, IO);
+					ListElementMap.Add(ElementType, IO);
+
+					CreateIfNotExist(ElementType);
+				}
+
+				return IO;
 			}
+
+			var CIO = new CompositeTypeIO(T);
+			CompositeMap.Add(T, CIO);
+			CIO.Init();
+			return CIO;
 		}
 
-		public class Indexer
-		{
-			private readonly IReadOnlyDictionary<Type, ITypeIO> Map;
-
-			public Indexer(IReadOnlyDictionary<Type, ITypeIO> Map) => this.Map = Map;
-
-			public ITypeIO this[Type T] => Map.TryGetValue(T, out var IO) ? IO : null;
-		}
-
-		public class AllIndexer
-		{
-			public ITypeIO this[Type T] => Primary[T] ?? Composite[T];
-		}
+		private static void CreateIfNotExist(Type T) { if (!Exist(T)) Create(T); }
 	}
 }

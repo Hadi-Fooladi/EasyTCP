@@ -26,38 +26,13 @@ namespace EasyTCP
 		private readonly Dictionary<ushort, Type> Packets = new Dictionary<ushort, Type>();
 
 		public void DefinePacket<PacketType>(ushort Code) => DefinePacket(Code, typeof(PacketType));
-		public void DefinePacket(ushort Code, Type PacketType) => CompositeTypeIO.GetOrCreate(Packets[Code] = PacketType);
+		public void DefinePacket(ushort Code, Type PacketType) => TypeIOs.GetOrCreate(Packets[Code] = PacketType);
 
 		public void Send(ushort Code, object Value)
 		{
 			lock (WriteLock)
 			{
-				#region Finding Type IO
-				var T = Value.GetType();
-				var IO = TypeIOs.All[T];
-
-				if (IO == null)
-				{
-					var CI = T.GetCollectionInterface();
-					if (CI == null)
-						throw new Exception("Value data type neither is not a collection or not defined");
-
-					// Finding collection element type
-					//var ET = CI.GetGenericArguments()[0];
-					var ET = T.GetCollectionElementType();
-					foreach (var CIO in TypeIOs.CollectionIOs)
-						if (CIO.ListType == ET)
-						{
-							IO = CIO;
-							break;
-						}
-
-					if (IO == null)
-						throw new Exception("Collection element type is not defined");
-
-					TypeIOs.AddComposite(T, IO);
-				}
-				#endregion
+				var IO = TypeIOs.GetOrCreate(Value.GetType());
 
 				WriteCode(Code);
 				IO.Write(BW, Value);
@@ -173,7 +148,7 @@ namespace EasyTCP
 					}
 
 					if (Packets.TryGetValue(Code, out var PacketType))
-						fireData(Code, TypeIOs.All[PacketType].Read(BR));
+						fireData(Code, TypeIOs.Get(PacketType).Read(BR));
 					else
 						BR.ReadBytes(Len); // Skip Packet
 				}

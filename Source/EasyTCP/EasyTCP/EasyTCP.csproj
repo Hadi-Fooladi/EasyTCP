@@ -43,6 +43,7 @@
     <Compile Include="EasyTCP.cs" />
     <Compile Include="EasyTCPAttribute.cs" />
     <Compile Include="Ext.cs" />
+    <Compile Include="TypeIO\ListIO.cs" />
     <Compile Include="TypeIO\TypeIOs.cs" />
     <Compile Include="TypeIO\CompositeTypeIO.cs" />
     <Compile Include="TypeIO\ITypeIO.cs" />
