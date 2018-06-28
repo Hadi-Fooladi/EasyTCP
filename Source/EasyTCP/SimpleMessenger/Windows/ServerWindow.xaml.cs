@@ -110,7 +110,8 @@ namespace SimpleMessenger
 				break;
 
 			case 5:
-				Do4All(TCP => TCP.Send(5, Value), Sender);
+			case 6:
+				Do4All(TCP => TCP.Send(Code, Value), Sender);
 				return;
 
 			default: return;

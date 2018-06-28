@@ -21,7 +21,8 @@ namespace EasyTCP
 			{ typeof(ulong), new UInt64TypeIO() },
 			{ typeof(double), new DoubleTypeIO() },
 			{ typeof(decimal), new DecimalTypeIO() },
-			{ typeof(sbyte), new SByteTypeIO() }
+			{ typeof(sbyte), new SByteTypeIO() },
+			{ typeof(byte[]), new ByteArrayTypeIO() }
 		};
 
 		private static readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();

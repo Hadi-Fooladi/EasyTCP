@@ -85,5 +85,18 @@ namespace EasyTCP
 		public object Read(BinaryReader BR) => BR.ReadSByte();
 		public void Write(BinaryWriter BW, object Value) => BW.Write((sbyte)Value);
 	}
+
+	internal class ByteArrayTypeIO : ITypeIO
+	{
+		public object Read(BinaryReader BR) => BR.ReadBytes(BR.ReadInt32());
+
+		public void Write(BinaryWriter BW, object Value)
+		{
+			var B = (byte[])Value;
+
+			BW.Write(B.Length);
+			BW.Write(B);
+		}
+	}
 }
 

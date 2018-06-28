@@ -14,6 +14,7 @@ namespace SimpleMessenger
 			DefinePacket<Vector>(3);
 			DefinePacket<Person>(4);
 			DefinePacket<ByteArray>(5); // Picture
+			DefinePacket<byte[]>(6); // Picture - Using an array of bytes
 		}
 	}
 }
