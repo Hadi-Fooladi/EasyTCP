@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EasyTCP;
 
 namespace SimpleMessenger
 {
@@ -12,7 +13,7 @@ namespace SimpleMessenger
 			DefinePacket<IReadOnlyCollection<int>>(2); // Random Numbers
 			DefinePacket<Vector>(3);
 			DefinePacket<Person>(4);
-			DefinePacket<byte[]>(5); // Picture
+			DefinePacket<ByteArray>(5); // Picture
 		}
 	}
 }

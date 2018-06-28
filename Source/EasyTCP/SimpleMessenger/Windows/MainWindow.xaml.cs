@@ -42,7 +42,7 @@ namespace SimpleMessenger
 				Invoke(() => TB.Inlines.Add(Value + Environment.NewLine));
 				break;
 			case 5:
-				Invoke(() => ShowPic(Value as byte[]));
+				Invoke(() => ShowPic(Value as ByteArray));
 				break;
 			}
 		}
@@ -79,14 +79,14 @@ namespace SimpleMessenger
 				using (MemoryStream Mem = new MemoryStream())
 				{
 					E.Save(Mem);
-					TCP.Send(5, Mem.ToArray());
+					TCP.Send(5, new ByteArray(Mem.ToArray()));
 				}
 			}
 		}
 
-		private void ShowPic(byte[] B)
+		private void ShowPic(ByteArray B)
 		{
-			using (var Mem = new MemoryStream(B, false))
+			using (var Mem = new MemoryStream(B.B, false))
 			{
 				var BM = new BitmapImage();
 				BM.BeginInit();

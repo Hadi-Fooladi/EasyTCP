@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 namespace EasyTCP
 {
 	internal static class TypeIOs
 	{
-		private static readonly IReadOnlyDictionary<Type, ITypeIO> PrimaryMap = new Dictionary<Type, ITypeIO>
+		private static readonly Dictionary<Type, ITypeIO> Map = new Dictionary<Type, ITypeIO>
 		{
 			{ typeof(int), new Int32TypeIO() },
 			{ typeof(float), new SingleTypeIO() },
@@ -23,17 +24,23 @@ namespace EasyTCP
 			{ typeof(sbyte), new SByteTypeIO() }
 		};
 
-		private static readonly Dictionary<Type, ListIO> ListMap = new Dictionary<Type, ListIO>();
 		private static readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();
-		private static readonly Dictionary<Type, CompositeTypeIO> CompositeMap = new Dictionary<Type, CompositeTypeIO>();
 
-		public static bool Exist(Type T) => PrimaryMap.ContainsKey(T) || CompositeMap.ContainsKey(T) || ListMap.ContainsKey(T);
-		public static ITypeIO Get(Type T) => PrimaryMap.GetValueOrNull(T) ?? CompositeMap.GetValueOrNull(T) as ITypeIO ?? ListMap.GetValueOrNull(T);
+		public static bool Exist(Type T) => Map.ContainsKey(T);
+		public static ITypeIO Get(Type T) => Map.GetValueOrNull(T);
 
 		public static ITypeIO GetOrCreate(Type T) => Get(T) ?? Create(T);
 
 		private static ITypeIO Create(Type T)
 		{
+			var IOA = T.GetCustomAttribute<Attributes.IOAttribute>();
+			if (IOA != null)
+			{
+				var IO = (ITypeIO)Activator.CreateInstance(IOA.IOType);
+				Map.Add(T, IO);
+				return IO;
+			}
+
 			if (T.IsCollection())
 			{
 				var ElementType = T.GetCollectionElementType();
@@ -41,11 +48,12 @@ namespace EasyTCP
 				// Check element type exist
 				var IO = ListElementMap.GetValueOrNull(ElementType);
 				if (IO != null)
-					ListMap.Add(T, IO);
+					Map.Add(T, IO);
 				else
 				{
 					IO = new ListIO(ElementType);
-					ListMap.Add(T, IO);
+
+					Map.Add(T, IO);
 					ListElementMap.Add(ElementType, IO);
 
 					CreateIfNotExist(ElementType);
@@ -55,7 +63,7 @@ namespace EasyTCP
 			}
 
 			var CIO = new CompositeTypeIO(T);
-			CompositeMap.Add(T, CIO);
+			Map.Add(T, CIO);
 			CIO.Init();
 			return CIO;
 		}

@@ -72,7 +72,6 @@
     </Compile>
     <Compile Include="Classes\ByteArray.cs" />
     <Compile Include="Classes\Constants.cs" />
-    <Compile Include="Classes\Ext\Misc.cs" />
     <Compile Include="Classes\MyEasyTCP.cs" />
     <Compile Include="Classes\Person.cs" />
     <Compile Include="Classes\Vector.cs" />
@@ -119,6 +118,9 @@
       <Project>{9ea91237-a549-4274-a957-e81bf2af6e31}</Project>
       <Name>EasyTCP</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\Ext\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

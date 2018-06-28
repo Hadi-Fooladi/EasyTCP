@@ -10,8 +10,6 @@ namespace EasyTCP
 
 		private readonly Type ElementType;
 
-		public void Init() { }
-
 		public object Read(BinaryReader BR)
 		{
 			int i, n = BR.ReadInt32();

@@ -40,8 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\IOAttribute.cs" />
     <Compile Include="EasyTCP.cs" />
-    <Compile Include="EasyTCPAttribute.cs" />
+    <Compile Include="Attributes\EasyTCPAttribute.cs" />
     <Compile Include="Ext.cs" />
     <Compile Include="TypeIO\ListIO.cs" />
     <Compile Include="TypeIO\TypeIOs.cs" />
