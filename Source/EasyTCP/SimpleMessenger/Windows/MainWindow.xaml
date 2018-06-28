@@ -12,8 +12,11 @@
 	WindowStartupLocation="CenterScreen"
 	Width="640" Height="480">
 	<DockPanel>
+		<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Margin="5">
+			<Button Width="100" VerticalAlignment="Center" Click="bVector_OnClick" Margin="0,0,5,0">Vector</Button>
+		</StackPanel>
 		<DockPanel DockPanel.Dock="Bottom" Height="50">
-			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bRandom_OnClick" Margin="0,0,5,0">Random</Button>
+			<Button DockPanel.Dock="Right" Width="100" VerticalAlignment="Center" Click="bRandom_OnClick" Margin="0,0,5,0">Random</Button>
 			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bPic_OnClick" Margin="0,0,5,0">Pic</Button>
 			<Button DockPanel.Dock="Right" Width="75" VerticalAlignment="Center" Click="bSend_OnClick" Margin="0,0,5,0">Send</Button>
 			<TextBox Name="tbMsg"  VerticalAlignment="Center" Margin="5,0" />

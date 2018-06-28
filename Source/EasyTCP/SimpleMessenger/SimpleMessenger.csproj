@@ -74,6 +74,7 @@
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Ext\Misc.cs" />
     <Compile Include="Classes\MyEasyTCP.cs" />
+    <Compile Include="Classes\Vector.cs" />
     <Compile Include="Windows\ServerWindow.xaml.cs">
       <DependentUpon>ServerWindow.xaml</DependentUpon>
     </Compile>

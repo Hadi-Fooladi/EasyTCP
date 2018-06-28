@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Windows;
-using Microsoft.Win32;
 using System.Net.Sockets;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-
-using EasyTCP;
+using System.Collections.Generic;
 
 namespace SimpleMessenger
 {
@@ -121,5 +115,8 @@ namespace SimpleMessenger
 			TCP.Send(2, L);
 		}
 		#endregion
+
+		private void bVector_OnClick(object sender, RoutedEventArgs e)
+			=> TCP.Send(3, new Vector { x = Rnd.Next(1, 1000), y = Rnd.Next(1, 1000), z = Rnd.Next(1, 1000) });
 	}
 }

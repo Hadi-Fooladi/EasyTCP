@@ -94,18 +94,26 @@ namespace SimpleMessenger
 
 		private void MyStream_OnInfo(EasyTCP.EasyTCP Sender, ushort Code, object Value)
 		{
+			string Message;
 			switch (Code)
 			{
 			case 0:
 				SendMessage(Sender, (Dic[Sender] = Value.ToString()) + " joined");
-				break;
-			case 1:
-				SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], Value));
-				break;
+				return;
+
 			case 2:
-				SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], string.Join(" ", Value as IEnumerable<int>)));
+				Message = string.Join(" ", Value as IEnumerable<int>);
 				break;
+
+			case 1:
+			case 3:
+				Message = Value.ToString();
+				break;
+
+			default: return;
 			}
+
+			SendMessage(Sender, string.Format("{0}> {1}", Dic[Sender], Message));
 		}
 		#endregion
 	}
