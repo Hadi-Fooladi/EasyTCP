@@ -107,6 +107,7 @@ namespace SimpleMessenger
 
 			case 1:
 			case 3:
+			case 4:
 				Message = Value.ToString();
 				break;
 

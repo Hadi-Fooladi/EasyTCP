@@ -14,6 +14,7 @@ namespace SimpleMessenger
 			DefinePacket<string>(1); // Message
 			DefinePacket<IReadOnlyCollection<int>>(2); // Random Numbers
 			DefinePacket<Vector>(3);
+			DefinePacket<Person>(4);
 		}
 	}
 }

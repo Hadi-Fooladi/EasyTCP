@@ -14,6 +14,7 @@
 	<DockPanel>
 		<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Margin="5">
 			<Button Width="100" VerticalAlignment="Center" Click="bVector_OnClick" Margin="0,0,5,0">Vector</Button>
+			<Button Width="100" VerticalAlignment="Center" Click="bPerson_OnClick" Margin="0,0,5,0">Person</Button>
 		</StackPanel>
 		<DockPanel DockPanel.Dock="Bottom" Height="50">
 			<Button DockPanel.Dock="Right" Width="100" VerticalAlignment="Center" Click="bRandom_OnClick" Margin="0,0,5,0">Random</Button>

@@ -30,22 +30,15 @@ namespace SimpleMessenger
 
 		private void TCP_OnData(EasyTCP.EasyTCP Sender, ushort Code, object Value)
 		{
-			switch (Code)
-			{
-			case 0:
-				break;
-			case 1:
+			if (Code == 1)
 				Invoke(() => TB.Inlines.Add(Value + Environment.NewLine));
-				break;
-			case 2:
-				Invoke(() => TB.Inlines.Add(string.Join(" ", Value as IEnumerable<int>) + Environment.NewLine));
-				break;
-			}
 		}
 
 		private const int PORT = 4987;
 
 		private void Invoke(Action A) => Dispatcher.BeginInvoke(A);
+
+		private static int Random3Digits => Global.Rnd.Next(1, 1000);
 
 		#region Event Handlers
 		private void bSend_OnClick(object sender, RoutedEventArgs e)
@@ -97,26 +90,26 @@ namespace SimpleMessenger
 		//	});
 		//}
 
-		private static readonly Random Rnd = new Random();
-
 		private void bRandom_OnClick(object sender, RoutedEventArgs e)
 		{
-			int i, n = Rnd.Next(2, 6);
+			int i, n = Global.Rnd.Next(2, 6);
 			var L = new List<int>();
 
 			for (i = 0; i < n; i++)
-				L.Add(Rnd.Next(1, 1000));
+				L.Add(Random3Digits);
 
 			//var L = new int[n];
 
 			//for (i = 0; i < n; i++)
-			//	L[i] = Rnd.Next(1, 1000);
+			//	L[i] = Random3Digits;
 
 			TCP.Send(2, L);
 		}
-		#endregion
 
 		private void bVector_OnClick(object sender, RoutedEventArgs e)
-			=> TCP.Send(3, new Vector { x = Rnd.Next(1, 1000), y = Rnd.Next(1, 1000), z = Rnd.Next(1, 1000) });
+			=> TCP.Send(3, new Vector { x = Random3Digits, y = Random3Digits, z = Random3Digits });
+
+		private void bPerson_OnClick(object sender, RoutedEventArgs e) => TCP.Send(4, new Person(100));
+		#endregion
 	}
 }
