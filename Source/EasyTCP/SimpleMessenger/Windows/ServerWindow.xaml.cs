@@ -84,8 +84,6 @@ namespace SimpleMessenger
 				}
 		}
 
-		//private void MyStream_OnPicture(MyStream Sender, ByteArray Data) => Do4All(MS => MS.SendPicture(Data), Sender);
-
 		private void MyStream_OnClosed(EasyTCP.EasyTCP S)
 		{
 			SendMessage(S, Dic[S] + " left");
@@ -110,6 +108,10 @@ namespace SimpleMessenger
 			case 4:
 				Message = Value.ToString();
 				break;
+
+			case 5:
+				Do4All(TCP => TCP.Send(5, Value), Sender);
+				return;
 
 			default: return;
 			}
