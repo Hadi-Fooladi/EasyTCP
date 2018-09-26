@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTCP", "EasyTCP\EasyTCP.csproj", "{9EA91237-A549-4274-A957-E81BF2AF6E31}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMessenger", "SimpleMessenger\SimpleMessenger.csproj", "{722D5F15-2130-4E71-8DBB-5D8CE44D7953}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTCP", "EasyTCP\EasyTCP.csproj", "{292335C9-DAC1-45F9-B025-B2B8AED6F202}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,16 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9EA91237-A549-4274-A957-E81BF2AF6E31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EA91237-A549-4274-A957-E81BF2AF6E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EA91237-A549-4274-A957-E81BF2AF6E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EA91237-A549-4274-A957-E81BF2AF6E31}.Release|Any CPU.Build.0 = Release|Any CPU
 		{722D5F15-2130-4E71-8DBB-5D8CE44D7953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{722D5F15-2130-4E71-8DBB-5D8CE44D7953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{722D5F15-2130-4E71-8DBB-5D8CE44D7953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{722D5F15-2130-4E71-8DBB-5D8CE44D7953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{292335C9-DAC1-45F9-B025-B2B8AED6F202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{292335C9-DAC1-45F9-B025-B2B8AED6F202}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{292335C9-DAC1-45F9-B025-B2B8AED6F202}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{292335C9-DAC1-45F9-B025-B2B8AED6F202}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FE568C3-C433-4AEB-AD52-B55353FCAEDF}
 	EndGlobalSection
 EndGlobal

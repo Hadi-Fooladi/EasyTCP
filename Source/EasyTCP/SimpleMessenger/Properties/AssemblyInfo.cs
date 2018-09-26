@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HaFT")]
 [assembly: AssemblyProduct("SimpleMessenger")]
-[assembly: AssemblyCopyright("Copyright © HaFT 2017")]
+[assembly: AssemblyCopyright("Copyright © HaFT 2017-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
