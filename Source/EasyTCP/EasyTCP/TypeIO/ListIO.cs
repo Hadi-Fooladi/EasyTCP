@@ -6,19 +6,23 @@ namespace EasyTCP
 {
 	internal class ListIO : ITypeIO
 	{
-		public ListIO(Type ElementType) => this.ElementType = ElementType;
+		public ListIO(Type ElementType, TypeIOs IOs)
+		{
+			this.ElementType = ElementType;
+			ElementIO = IOs.GetOrCreate(ElementType);
+		}
 
 		private readonly Type ElementType;
+		private readonly ITypeIO ElementIO;
 
 		public object Read(BinaryReader BR)
 		{
 			int i, n = BR.ReadInt32();
 
-			var IO = TypeIOs.Get(ElementType);
 			var A = Array.CreateInstance(ElementType, n);
 
 			for (i = 0; i < n; i++)
-				A.SetValue(IO.Read(BR), i);
+				A.SetValue(ElementIO.Read(BR), i);
 
 			return A;
 		}
@@ -26,11 +30,10 @@ namespace EasyTCP
 		public void Write(BinaryWriter BW, object Value)
 		{
 			var C = (ICollection)Value;
-			var IO = TypeIOs.Get(ElementType);
 
 			BW.Write(C.Count);
 			foreach (var X in C)
-				IO.Write(BW, X);
+				ElementIO.Write(BW, X);
 		}
 	}
 }

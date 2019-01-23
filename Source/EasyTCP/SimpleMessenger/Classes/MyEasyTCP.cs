@@ -8,6 +8,8 @@ namespace SimpleMessenger
 	{
 		public MyEasyTCP(int WriteBufferLength) : base(WriteBufferLength)
 		{
+			DefinePacketIO<Vector>(new VectorIO());
+
 			DefinePacket<string>(0); // Name
 			DefinePacket<string>(1); // Message
 			DefinePacket<IReadOnlyCollection<int>>(2); // Random Numbers

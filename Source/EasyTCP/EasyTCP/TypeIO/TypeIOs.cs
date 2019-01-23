@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace EasyTCP
 {
-	internal static class TypeIOs
+	internal class TypeIOs
 	{
-		private static readonly Dictionary<Type, ITypeIO> Map = new Dictionary<Type, ITypeIO>
+		private static readonly IDictionary<Type, ITypeIO> PrimitiveIOs = new Dictionary<Type, ITypeIO>()
 		{
 			{ typeof(int), new Int32TypeIO() },
 			{ typeof(float), new SingleTypeIO() },
@@ -25,20 +25,24 @@ namespace EasyTCP
 			{ typeof(byte[]), new ByteArrayTypeIO() }
 		};
 
-		private static readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();
+		private readonly Dictionary<Type, ITypeIO> Map = new Dictionary<Type, ITypeIO>(PrimitiveIOs);
 
-		public static bool Exist(Type T) => Map.ContainsKey(T);
-		public static ITypeIO Get(Type T) => Map.GetValueOrNull(T);
+		private readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();
 
-		public static ITypeIO GetOrCreate(Type T) => Get(T) ?? Create(T);
+		public bool Exist(Type T) => Map.ContainsKey(T);
+		public ITypeIO Get(Type T) => Map.GetValueOrNull(T);
 
-		private static ITypeIO Create(Type T)
+		public ITypeIO GetOrCreate(Type T) => Get(T) ?? Create(T);
+
+		public void Add(Type T, ITypeIO IO) => Map.Add(T, IO);
+
+		private ITypeIO Create(Type T)
 		{
 			var IOA = T.GetCustomAttribute<Attributes.IOAttribute>();
 			if (IOA != null)
 			{
 				var IO = (ITypeIO)Activator.CreateInstance(IOA.IOType);
-				Map.Add(T, IO);
+				Add(T, IO);
 				return IO;
 			}
 
@@ -49,26 +53,24 @@ namespace EasyTCP
 				// Check element type exist
 				var IO = ListElementMap.GetValueOrNull(ElementType);
 				if (IO != null)
-					Map.Add(T, IO);
+					Add(T, IO);
 				else
 				{
-					IO = new ListIO(ElementType);
+					IO = new ListIO(ElementType, this);
 
-					Map.Add(T, IO);
+					Add(T, IO);
 					ListElementMap.Add(ElementType, IO);
-
-					CreateIfNotExist(ElementType);
 				}
 
 				return IO;
 			}
 
 			var CIO = new CompositeTypeIO(T);
-			Map.Add(T, CIO);
-			CIO.Init();
+			Add(T, CIO);
+			CIO.Init(this);
 			return CIO;
 		}
 
-		private static void CreateIfNotExist(Type T) { if (!Exist(T)) Create(T); }
+		private void CreateIfNotExist(Type T) { if (!Exist(T)) Create(T); }
 	}
 }

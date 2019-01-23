@@ -23,16 +23,20 @@ namespace EasyTCP
 
 		public static Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
+		private readonly TypeIOs IOs = new TypeIOs();
 		private readonly Dictionary<ushort, Type> Packets = new Dictionary<ushort, Type>();
 
 		public void DefinePacket<PacketType>(ushort Code) => DefinePacket(Code, typeof(PacketType));
-		public void DefinePacket(ushort Code, Type PacketType) => TypeIOs.GetOrCreate(Packets[Code] = PacketType);
+		public void DefinePacket(ushort Code, Type PacketType) => IOs.GetOrCreate(Packets[Code] = PacketType);
+
+		public void DefinePacketIO(Type PacketType, ITypeIO IO) => IOs.Add(PacketType, IO);
+		public void DefinePacketIO<PacketType>(ITypeIO IO) => DefinePacketIO(typeof(PacketType), IO);
 
 		public void Send(ushort Code, object Value)
 		{
 			lock (WriteLock)
 			{
-				var IO = TypeIOs.GetOrCreate(Value.GetType());
+				var IO = IOs.GetOrCreate(Value.GetType());
 
 				WriteCode(Code);
 				IO.Write(BW, Value);
@@ -148,7 +152,7 @@ namespace EasyTCP
 					}
 
 					if (Packets.TryGetValue(Code, out var PacketType))
-						fireData(Code, TypeIOs.Get(PacketType).Read(BR));
+						fireData(Code, IOs.Get(PacketType).Read(BR));
 					else
 						BR.ReadBytes(Len); // Skip Packet
 				}

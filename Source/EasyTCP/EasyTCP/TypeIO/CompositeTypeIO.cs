@@ -15,13 +15,13 @@ namespace EasyTCP
 		#endregion
 
 		#region ITypeIO Members
-		public void Init()
+		public void Init(TypeIOs IOs)
 		{
 			foreach (var F in T.GetFields())
 			{
 				var A = F.GetCustomAttribute<EasyTCPAttribute>();
 				if (A != null)
-					Fields.Add(A.Order, new CField(F));
+					Fields.Add(A.Order, new CField(F, IOs));
 			}
 		}
 
@@ -48,10 +48,10 @@ namespace EasyTCP
 			public readonly ITypeIO IO;
 			public readonly FieldInfo Info;
 
-			public CField(FieldInfo Info)
+			public CField(FieldInfo Info, TypeIOs IOs)
 			{
 				this.Info = Info;
-				IO = TypeIOs.GetOrCreate(Info.FieldType);
+				IO = IOs.GetOrCreate(Info.FieldType);
 			}
 		}
 		#endregion
