@@ -14,6 +14,8 @@ namespace SimpleMessenger
 
 		[EasyTCP(2)] public IReadOnlyCollection<Person> Children;
 
+		[EasyTCP(3)] public Gender Gender;
+
 		public Person() { }
 
 		public Person(int MaxAge)
@@ -22,6 +24,8 @@ namespace SimpleMessenger
 
 			Name = RandomName;
 			Age = Rnd.Next(MaxAge) + 1;
+
+			Gender = (Gender)(Age / 25);
 
 			List<Person> L = new List<Person>();
 			if (Age > 21)
@@ -57,7 +61,7 @@ namespace SimpleMessenger
 			SB.AppendLine();
 			for (int i = 0; i < Indention; i++) SB.Append(' ');
 
-			SB.Append($"{Name} ({Age})");
+			SB.Append($"{Name} ({Age}) [{Gender}]");
 
 			Indention += 3;
 			foreach (var Child in Children)

@@ -6,7 +6,7 @@ namespace EasyTCP
 {
 	internal class TypeIOs
 	{
-		private static readonly IDictionary<Type, ITypeIO> PrimitiveIOs = new Dictionary<Type, ITypeIO>()
+		private static readonly IDictionary<Type, ITypeIO> PrimitiveIOs = new Dictionary<Type, ITypeIO>
 		{
 			{ typeof(int), new Int32TypeIO() },
 			{ typeof(float), new SingleTypeIO() },
@@ -36,39 +36,46 @@ namespace EasyTCP
 
 		public void Add(Type T, ITypeIO IO) => Map.Add(T, IO);
 
-		private ITypeIO Create(Type T)
+		private ITypeIO Create(Type type)
 		{
-			var IOA = T.GetCustomAttribute<Attributes.IOAttribute>();
-			if (IOA != null)
+			var ioAttr = type.GetCustomAttribute<Attributes.IOAttribute>();
+			if (ioAttr != null)
 			{
-				var IO = (ITypeIO)Activator.CreateInstance(IOA.IOType);
-				Add(T, IO);
-				return IO;
+				var io = (ITypeIO)Activator.CreateInstance(ioAttr.IOType);
+				Add(type, io);
+				return io;
 			}
 
-			if (T.IsCollection())
+			if (type.IsEnum)
 			{
-				var ElementType = T.GetCollectionElementType();
+				var io = PrimitiveIOs[type.GetEnumUnderlyingType()];
+				Add(type, io);
+				return io;
+			}
+
+			if (type.IsCollection())
+			{
+				var elementType = type.GetCollectionElementType();
 
 				// Check element type exist
-				var IO = ListElementMap.GetValueOrNull(ElementType);
-				if (IO != null)
-					Add(T, IO);
+				var io = ListElementMap.GetValueOrNull(elementType);
+				if (io != null)
+					Add(type, io);
 				else
 				{
-					IO = new ListIO(ElementType, this);
+					io = new ListIO(elementType, this);
 
-					Add(T, IO);
-					ListElementMap.Add(ElementType, IO);
+					Add(type, io);
+					ListElementMap.Add(elementType, io);
 				}
 
-				return IO;
+				return io;
 			}
 
-			var CIO = new CompositeTypeIO(T);
-			Add(T, CIO);
-			CIO.Init(this);
-			return CIO;
+			var cio = new CompositeTypeIO(type);
+			Add(type, cio);
+			cio.Init(this);
+			return cio;
 		}
 
 		private void CreateIfNotExist(Type T) { if (!Exist(T)) Create(T); }

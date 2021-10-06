@@ -68,6 +68,7 @@
     </Compile>
     <Compile Include="Classes\ByteArray.cs" />
     <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Classes\Gender.cs" />
     <Compile Include="Classes\MyEasyTCP.cs" />
     <Compile Include="Classes\Person.cs" />
     <Compile Include="Classes\Vector.cs" />
