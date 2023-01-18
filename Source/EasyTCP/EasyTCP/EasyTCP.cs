@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Reflection;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
@@ -21,7 +20,7 @@ namespace EasyTCP
 			_readerThread = new Thread(ReceiveData) { IsBackground = true };
 		}
 
-		public static Version Version => Assembly.GetExecutingAssembly().GetName().Version;
+		public static Version Version => typeof(EasyTCP).Assembly.GetName().Version;
 
 		public void DefinePacket<PacketType>(ushort code) => DefinePacket(code, typeof(PacketType));
 		public void DefinePacket(ushort code, Type packetType) => _ioContainer.GetOrCreate(_packets[code] = packetType);
