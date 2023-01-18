@@ -6,7 +6,7 @@ namespace EasyTCP
 {
 	internal class TypeIOs
 	{
-		private static readonly IDictionary<Type, ITypeIO> PrimitiveIOs = new Dictionary<Type, ITypeIO>
+		static readonly IDictionary<Type, ITypeIO> s_primitiveIOs = new Dictionary<Type, ITypeIO>
 		{
 			{ typeof(int), new Int32TypeIO() },
 			{ typeof(float), new SingleTypeIO() },
@@ -25,18 +25,16 @@ namespace EasyTCP
 			{ typeof(byte[]), new ByteArrayTypeIO() }
 		};
 
-		private readonly Dictionary<Type, ITypeIO> Map = new Dictionary<Type, ITypeIO>(PrimitiveIOs);
+		readonly Dictionary<Type, ITypeIO> _ioByType = new Dictionary<Type, ITypeIO>(s_primitiveIOs);
+		readonly Dictionary<Type, ListIO> _listIOByElementType = new Dictionary<Type, ListIO>();
 
-		private readonly Dictionary<Type, ListIO> ListElementMap = new Dictionary<Type, ListIO>();
+		public bool Exist(Type type) => _ioByType.ContainsKey(type);
+		public ITypeIO Get(Type type) => _ioByType.GetValueOrNull(type);
+		public ITypeIO GetOrCreate(Type type) => Get(type) ?? Create(type);
 
-		public bool Exist(Type T) => Map.ContainsKey(T);
-		public ITypeIO Get(Type T) => Map.GetValueOrNull(T);
+		public void Add(Type type, ITypeIO io) => _ioByType.Add(type, io);
 
-		public ITypeIO GetOrCreate(Type T) => Get(T) ?? Create(T);
-
-		public void Add(Type T, ITypeIO IO) => Map.Add(T, IO);
-
-		private ITypeIO Create(Type type)
+		ITypeIO Create(Type type)
 		{
 			var ioAttr = type.GetCustomAttribute<Attributes.IOAttribute>();
 			if (ioAttr != null)
@@ -48,7 +46,7 @@ namespace EasyTCP
 
 			if (type.IsEnum)
 			{
-				var io = PrimitiveIOs[type.GetEnumUnderlyingType()];
+				var io = s_primitiveIOs[type.GetEnumUnderlyingType()];
 				Add(type, io);
 				return io;
 			}
@@ -58,7 +56,7 @@ namespace EasyTCP
 				var elementType = type.GetCollectionElementType();
 
 				// Check element type exist
-				var io = ListElementMap.GetValueOrNull(elementType);
+				var io = _listIOByElementType.GetValueOrNull(elementType);
 				if (io != null)
 					Add(type, io);
 				else
@@ -66,7 +64,7 @@ namespace EasyTCP
 					io = new ListIO(elementType, this);
 
 					Add(type, io);
-					ListElementMap.Add(elementType, io);
+					_listIOByElementType.Add(elementType, io);
 				}
 
 				return io;
@@ -78,6 +76,6 @@ namespace EasyTCP
 			return cio;
 		}
 
-		private void CreateIfNotExist(Type T) { if (!Exist(T)) Create(T); }
+		void CreateIfNotExist(Type type) { if (!Exist(type)) Create(type); }
 	}
 }

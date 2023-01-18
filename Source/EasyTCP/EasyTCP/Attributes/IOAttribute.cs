@@ -8,8 +8,8 @@ namespace EasyTCP.Attributes
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 	public class IOAttribute : Attribute
 	{
-		/// <param name="IOType">Must implement 'ITypeIO' and must have a default constructor</param>
-		public IOAttribute(Type IOType) => this.IOType = IOType;
+		/// <param name="type">Must implement 'ITypeIO' and must have a default constructor</param>
+		public IOAttribute(Type type) => IOType = type;
 
 		public readonly Type IOType;
 	}

@@ -10,154 +10,154 @@ namespace EasyTCP
 {
 	public class EasyTCP
 	{
-		public delegate void dlgData(EasyTCP Sender, ushort Code, object Value);
+		public delegate void dlgData(EasyTCP sender, ushort code, object value);
 
-		public EasyTCP(int WriteBufferLength = 65536)
+		public EasyTCP(int writeBufferLength = 65536)
 		{
-			B = new byte[WriteBufferLength];
-			MS = new MemoryStream(B);
-			BW = new BinaryWriter(MS, Encoding.Unicode);
+			_buffer = new byte[writeBufferLength];
+			_ms = new MemoryStream(_buffer);
+			_bw = new BinaryWriter(_ms, Encoding.Unicode);
 
-			T = new Thread(ReceiveData) { IsBackground = true };
+			_readerThread = new Thread(ReceiveData) { IsBackground = true };
 		}
 
 		public static Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
-		private readonly TypeIOs IOs = new TypeIOs();
-		private readonly Dictionary<ushort, Type> Packets = new Dictionary<ushort, Type>();
+		public void DefinePacket<PacketType>(ushort code) => DefinePacket(code, typeof(PacketType));
+		public void DefinePacket(ushort code, Type packetType) => _ioContainer.GetOrCreate(_packets[code] = packetType);
 
-		public void DefinePacket<PacketType>(ushort Code) => DefinePacket(Code, typeof(PacketType));
-		public void DefinePacket(ushort Code, Type PacketType) => IOs.GetOrCreate(Packets[Code] = PacketType);
+		public void DefinePacketIO(Type packetType, ITypeIO io) => _ioContainer.Add(packetType, io);
+		public void DefinePacketIO<PacketType>(ITypeIO io) => DefinePacketIO(typeof(PacketType), io);
 
-		public void DefinePacketIO(Type PacketType, ITypeIO IO) => IOs.Add(PacketType, IO);
-		public void DefinePacketIO<PacketType>(ITypeIO IO) => DefinePacketIO(typeof(PacketType), IO);
-
-		public void Send(ushort Code, object Value)
+		public void Send(ushort code, object value)
 		{
-			lock (WriteLock)
+			lock (_writeLock)
 			{
-				var IO = IOs.GetOrCreate(Value.GetType());
+				var io = _ioContainer.GetOrCreate(value.GetType());
 
-				WriteCode(Code);
-				IO.Write(BW, Value);
+				WriteCode(code);
+				io.Write(_bw, value);
 				Flush();
 			}
 		}
 
 		#region Fields
-		private NetworkStream NS;
-		private BinaryReader BR;
-		private TcpClient Client;
+		NetworkStream _ns;
+		BinaryReader _br;
+		TcpClient _client;
 
-		private readonly byte[] B;
-		private readonly MemoryStream MS;
-		private readonly BinaryWriter BW;
+		readonly byte[] _buffer;
+		readonly MemoryStream _ms;
+		readonly BinaryWriter _bw;
 
-		private bool Closing;
-		private readonly object WriteLock = new object();
+		bool _isClosing;
+		readonly object _writeLock = new object();
 
-		private readonly Thread T;
+		readonly Thread _readerThread;
+
+		readonly TypeIOs _ioContainer = new TypeIOs();
+		readonly Dictionary<ushort, Type> _packets = new Dictionary<ushort, Type>();
 		#endregion
 
 		#region Events
 		public event Action<EasyTCP> OnClosed;
-		private void fireClosed() => OnClosed?.Invoke(this);
+		void FireClosed() => OnClosed?.Invoke(this);
 
 		public event Action<EasyTCP, Exception> OnException;
-		protected void fireException(Exception E) => OnException?.Invoke(this, E);
+		protected void fireException(Exception ex) => OnException?.Invoke(this, ex);
 
 		public event dlgData OnData;
-		private void fireData(ushort Code, object Value) => OnData?.Invoke(this, Code, Value);
+		void FireData(ushort code, object value) => OnData?.Invoke(this, code, value);
 		#endregion
 
 		#region Essential Methods
-		public void Connect(TcpClient Client, int VersionMajor, int VersionMinor)
+		public void Connect(TcpClient client, int versionMajor, int versionMinor)
 		{
-			this.Client = Client;
-			Client.NoDelay = true;
+			_client = client;
+			client.NoDelay = true;
 
-			NS = Client.GetStream();
-			BR = new BinaryReader(NS, Encoding.Unicode);
-			var BW = new BinaryWriter(NS);
+			_ns = client.GetStream();
+			_br = new BinaryReader(_ns, Encoding.Unicode);
+			var bw = new BinaryWriter(_ns);
 
-			BW.Write(VersionMajor);
-			BW.Write(VersionMinor);
+			bw.Write(versionMajor);
+			bw.Write(versionMinor);
 
-			var Major = BR.ReadInt32();
-			BR.ReadInt32(); // Skip Minor
+			var major = _br.ReadInt32();
+			_br.ReadInt32(); // Skip Minor
 
-			if (Major != VersionMajor)
+			if (major != versionMajor)
 				throw new Exception("Version Mismatch");
 
-			T.Start();
+			_readerThread.Start();
 		}
 
 		public void SendCloseRequest()
 		{
-			if (Closing) return;
+			if (_isClosing) return;
 
-			Closing = true;
+			_isClosing = true;
 
-			lock (WriteLock)
+			lock (_writeLock)
 			{
 				WriteCode(0xFFFF);
 				Flush();
 			}
 		}
 
-		public void Wait4Close(int MilliSeconds = 3000) { T.Join(MilliSeconds); }
+		public void Wait4Close(int milliSeconds = 3000) { _readerThread.Join(milliSeconds); }
 
-		private void WriteCode(ushort Code)
+		void WriteCode(ushort code)
 		{
-			BW.Write(Code);
-			MS.Position += 4;
+			_bw.Write(code);
+			_ms.Position += 4;
 		}
 
-		private void Flush()
+		void Flush()
 		{
-			var Len = (int)(MS.Position - 6);
-			MS.Position = 2;
-			BW.Write(Len);
+			var len = (int)(_ms.Position - 6);
+			_ms.Position = 2;
+			_bw.Write(len);
 
 			try
 			{
-				NS.Write(B, 0, Len + 6);
+				_ns.Write(_buffer, 0, len + 6);
 			}
 			catch (Exception E)
 			{
-				Closing = true;
+				_isClosing = true;
 				fireException(E);
 			}
 
-			MS.Position = 0;
+			_ms.Position = 0;
 		}
 		#endregion
 
-		private void ReceiveData()
+		void ReceiveData()
 		{
 			try
 			{
 				for (; ; )
 				{
-					ushort Code = BR.ReadUInt16();
-					int Len = BR.ReadInt32();
+					ushort code = _br.ReadUInt16();
+					int len = _br.ReadInt32();
 
-					if (Code == 0xFFFF)
+					if (code == 0xFFFF)
 					{
 						SendCloseRequest();
 
-						Client.Close();
-						fireClosed();
+						_client.Close();
+						FireClosed();
 						return; // Exit the thread
 					}
 
-					if (Packets.TryGetValue(Code, out var PacketType))
-						fireData(Code, IOs.Get(PacketType).Read(BR));
+					if (_packets.TryGetValue(code, out var packetType))
+						FireData(code, _ioContainer.Get(packetType).Read(_br));
 					else
-						BR.ReadBytes(Len); // Skip Packet
+						_br.ReadBytes(len); // Skip the packet (Undefined packet [code])
 				}
 			}
-			catch (Exception E) { fireException(E); }
+			catch (Exception ex) { fireException(ex); }
 		}
 	}
 }

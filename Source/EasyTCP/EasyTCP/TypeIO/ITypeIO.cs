@@ -4,7 +4,7 @@ namespace EasyTCP
 {
 	public interface ITypeIO
 	{
-		object Read(BinaryReader BR);
-		void Write(BinaryWriter BW, object Value);
+		object Read(BinaryReader br);
+		void Write(BinaryWriter bw, object value);
 	}
 }

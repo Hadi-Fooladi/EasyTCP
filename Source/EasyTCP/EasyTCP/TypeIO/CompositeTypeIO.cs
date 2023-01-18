@@ -5,53 +5,53 @@ using System.Collections.Generic;
 
 namespace EasyTCP
 {
-	internal class CompositeTypeIO : ITypeIO
+	class CompositeTypeIO : ITypeIO
 	{
-		public CompositeTypeIO(Type T) => this.T = T;
+		public CompositeTypeIO(Type t) => _t = t;
 
 		#region Fields
-		private readonly Type T;
-		private readonly SortedList<int, CField> Fields = new SortedList<int, CField>();
+		readonly Type _t;
+		readonly SortedList<int, CField> _fields = new SortedList<int, CField>();
 		#endregion
 
 		#region ITypeIO Members
-		public void Init(TypeIOs IOs)
+		public void Init(TypeIOs container)
 		{
-			foreach (var F in T.GetFields())
+			foreach (var field in _t.GetFields())
 			{
-				var A = F.GetCustomAttribute<EasyTCPAttribute>();
-				if (A != null)
-					Fields.Add(A.Order, new CField(F, IOs));
+				var attr = field.GetCustomAttribute<EasyTCPAttribute>();
+				if (attr != null)
+					_fields.Add(attr.Order, new CField(field, container));
 			}
 		}
 
-		public object Read(BinaryReader BR)
+		public object Read(BinaryReader br)
 		{
-			var Result = Activator.CreateInstance(T);
+			var instance = Activator.CreateInstance(_t);
 
-			foreach (var F in Fields.Values)
-				F.Info.SetValue(Result, F.IO.Read(BR));
+			foreach (var field in _fields.Values)
+				field.Info.SetValue(instance, field.IO.Read(br));
 
-			return Result;
+			return instance;
 		}
 
-		public void Write(BinaryWriter BW, object Value)
+		public void Write(BinaryWriter bw, object value)
 		{
-			foreach (var F in Fields.Values)
-				F.IO.Write(BW, F.Info.GetValue(Value));
+			foreach (var field in _fields.Values)
+				field.IO.Write(bw, field.Info.GetValue(value));
 		}
 		#endregion
 
 		#region Nested Classes
-		private class CField
+		class CField
 		{
 			public readonly ITypeIO IO;
 			public readonly FieldInfo Info;
 
-			public CField(FieldInfo Info, TypeIOs IOs)
+			public CField(FieldInfo info, TypeIOs container)
 			{
-				this.Info = Info;
-				IO = IOs.GetOrCreate(Info.FieldType);
+				Info = info;
+				IO = container.GetOrCreate(info.FieldType);
 			}
 		}
 		#endregion

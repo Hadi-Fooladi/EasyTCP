@@ -5,36 +5,36 @@ using System.Collections.Generic;
 
 namespace EasyTCP
 {
-	internal static class Ext
+	static class Ext
 	{
-		public static readonly Type CollectionType = typeof(ICollection);
+		static readonly Type s_collectionType = typeof(ICollection);
 
-		public static readonly Type[] GenericCollectionTypes =
+		static readonly Type[] s_genericCollectionTypes =
 		{
 			typeof(ICollection<>),
 			typeof(IReadOnlyCollection<>)
 		};
 
-		public static Type GetCollectionElementType(this Type T)
-			=> T.IsGenericType ?
-				T.GetGenericArguments().Single() :
-				T.GetElementType();
+		public static Type GetCollectionElementType(this Type type)
+			=> type.IsGenericType ?
+				type.GetGenericArguments().Single() :
+				type.GetElementType();
 
-		public static bool IsCollection(this Type T)
+		public static bool IsCollection(this Type type)
 		{
-			if (T.IsGenericType)
+			if (type.IsGenericType)
 			{
-				var GTD = T.GetGenericTypeDefinition();
-				foreach (var GCT in GenericCollectionTypes)
-					if (GTD == GCT)
+				var def = type.GetGenericTypeDefinition();
+				foreach (var gct in s_genericCollectionTypes)
+					if (def == gct)
 						return true;
 			}
 
-			return T.GetInterface(CollectionType.Name) != null;
+			return type.GetInterface(s_collectionType.Name) != null;
 		}
 
-		public static TValue GetValueOrNull<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> Dic, TKey Key)
+		public static TValue GetValueOrNull<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key)
 			where TValue : class
-			=> Dic.TryGetValue(Key, out var Value) ? Value : null;
+			=> dictionary.TryGetValue(key, out var value) ? value : null;
 	}
 }

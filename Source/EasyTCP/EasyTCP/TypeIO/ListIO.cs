@@ -4,36 +4,35 @@ using System.Collections;
 
 namespace EasyTCP
 {
-	internal class ListIO : ITypeIO
+	class ListIO : ITypeIO
 	{
-		public ListIO(Type ElementType, TypeIOs IOs)
+		public ListIO(Type elementType, TypeIOs container)
 		{
-			this.ElementType = ElementType;
-			ElementIO = IOs.GetOrCreate(ElementType);
+			_elementType = elementType;
+			_elementIO = container.GetOrCreate(elementType);
 		}
 
-		private readonly Type ElementType;
-		private readonly ITypeIO ElementIO;
+		readonly Type _elementType;
+		readonly ITypeIO _elementIO;
 
-		public object Read(BinaryReader BR)
+		public object Read(BinaryReader br)
 		{
-			int i, n = BR.ReadInt32();
-
-			var A = Array.CreateInstance(ElementType, n);
+			int i, n = br.ReadInt32();
+			var array = Array.CreateInstance(_elementType, n);
 
 			for (i = 0; i < n; i++)
-				A.SetValue(ElementIO.Read(BR), i);
+				array.SetValue(_elementIO.Read(br), i);
 
-			return A;
+			return array;
 		}
 
-		public void Write(BinaryWriter BW, object Value)
+		public void Write(BinaryWriter bw, object value)
 		{
-			var C = (ICollection)Value;
+			var collection = (ICollection)value;
 
-			BW.Write(C.Count);
-			foreach (var X in C)
-				ElementIO.Write(BW, X);
+			bw.Write(collection.Count);
+			foreach (var item in collection)
+				_elementIO.Write(bw, item);
 		}
 	}
 }

@@ -7,6 +7,6 @@ namespace EasyTCP
 	{
 		public readonly int Order;
 
-		public EasyTCPAttribute(int Order) => this.Order = Order;
+		public EasyTCPAttribute(int order) { Order = order; }
 	}
 }
